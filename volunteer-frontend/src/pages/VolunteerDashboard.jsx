@@ -3,14 +3,78 @@ import { useNavigate } from "react-router-dom";
 import gsap from "gsap";
 import Sidebar from "../components/Sidebar";
 import Navbar from "../components/Navbar";
+import ChatBot from "../components/ChatBot";
+import { API_BASE } from "../config";
 
 function VolunteerDashboard() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [stats, setStats] = useState({
+    totalEvents: 0,
+    approvedEvents: 0,
+    pendingEvents: 0,
+    completedEvents: 0,
+  });
   const navigate = useNavigate();
 
   const user = JSON.parse(localStorage.getItem("user") || "{}");
 
   const cardsRef = useRef(null);
+
+  // ✅ Fetch Stats
+  useEffect(() => {
+    const fetchStats = async () => {
+      if (!user?.email) return;
+      
+      try {
+        // Fetch participations for this volunteer
+        const pRes = await fetch(`${API_BASE}/participations/volunteer/${user.email}`);
+        if (pRes.ok) {
+          const participations = await pRes.json();
+          const pList = Array.isArray(participations) ? participations : [];
+          
+          const approvedCount = pList.filter(p => p.status === "APPROVED").length;
+          const pendingCount = pList.filter(p => p.status === "PENDING").length;
+          
+          // Fetch events to check for completed ones
+          const eRes = await fetch(`${API_BASE}/events/all`);
+          let completedCount = 0;
+          
+          if (eRes.ok) {
+            const events = await eRes.json();
+            const eventMap = {};
+            (Array.isArray(events) ? events : []).forEach(e => {
+              eventMap[e.id] = e;
+            });
+            
+            // Count completed events (approved + event has ended)
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            
+            pList.forEach(p => {
+              if (p.status === "APPROVED" && eventMap[p.eventId]) {
+                const endDate = new Date(eventMap[p.eventId].endDate);
+                endDate.setHours(0, 0, 0, 0);
+                if (today > endDate) {
+                  completedCount++;
+                }
+              }
+            });
+          }
+          
+          setStats({
+            totalEvents: pList.length,
+            approvedEvents: approvedCount,
+            pendingEvents: pendingCount,
+            completedEvents: completedCount,
+          });
+        }
+      } catch (err) {
+        console.log("Failed to fetch stats:", err);
+      }
+    };
+    
+    fetchStats();
+  }, [user?.email]);
 
   // ✅ GSAP Animation
   useEffect(() => {
@@ -33,27 +97,78 @@ function VolunteerDashboard() {
     <>
       <Navbar toggleSidebar={() => setSidebarOpen(true)} />
 
-      <div className="flex min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+      <div className="flex min-h-screen bg-white">
         <Sidebar
           role="VOLUNTEER"
           isOpen={sidebarOpen}
           closeSidebar={() => setSidebarOpen(false)}
         />
 
-        <div className="flex-1 p-8">
+        <div className="flex-1 p-8 bg-linear-to-br from-gray-50 to-gray-100">
           {/* Header */}
           <div className="mb-8 animate-slide-up">
             <div className="flex items-center gap-3 mb-2">
-              <div className="p-3 bg-gradient-to-br from-green-500 to-emerald-600 rounded-2xl shadow-lg">
+              <div className="p-3 bg-linear-to-br from-green-500 to-emerald-600 rounded-2xl shadow-lg">
                 <span className="text-3xl">👋</span>
               </div>
               <div>
-                <h2 className="text-3xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
+                <h2 className="text-3xl font-bold bg-linear-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
                   Welcome, {user?.name || "Volunteer"}!
                 </h2>
                 <p className="text-gray-600 mt-1">
                   Explore events, join opportunities & track your participation
                 </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Stats Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+            <div className="bg-white rounded-2xl shadow-lg p-5 border border-gray-100 hover:shadow-xl transition-all duration-300">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-gray-500 text-sm font-medium">Total Applied</p>
+                  <p className="text-3xl font-bold text-gray-800">{stats.totalEvents}</p>
+                </div>
+                <div className="p-3 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl">
+                  <span className="text-2xl">📋</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-white rounded-2xl shadow-lg p-5 border border-gray-100 hover:shadow-xl transition-all duration-300">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-gray-500 text-sm font-medium">Approved</p>
+                  <p className="text-3xl font-bold text-green-600">{stats.approvedEvents}</p>
+                </div>
+                <div className="p-3 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl">
+                  <span className="text-2xl">✅</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-white rounded-2xl shadow-lg p-5 border border-gray-100 hover:shadow-xl transition-all duration-300">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-gray-500 text-sm font-medium">Pending</p>
+                  <p className="text-3xl font-bold text-yellow-600">{stats.pendingEvents}</p>
+                </div>
+                <div className="p-3 bg-gradient-to-br from-yellow-500 to-amber-600 rounded-xl">
+                  <span className="text-2xl">⏳</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-white rounded-2xl shadow-lg p-5 border border-gray-100 hover:shadow-xl transition-all duration-300">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-gray-500 text-sm font-medium">Completed</p>
+                  <p className="text-3xl font-bold text-blue-600">{stats.completedEvents}</p>
+                </div>
+                <div className="p-3 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-xl">
+                  <span className="text-2xl">🏆</span>
+                </div>
               </div>
             </div>
           </div>
@@ -185,8 +300,10 @@ function VolunteerDashboard() {
           </div>
         </div>
       </div>
+      <ChatBot />
     </>
   );
 }
 
 export default VolunteerDashboard;
+

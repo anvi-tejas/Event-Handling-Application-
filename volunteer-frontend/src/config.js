@@ -1,10 +1,12 @@
+import axios from "axios";
+
 export const API_BASE = "http://localhost:8080";
 
-export const healthCheck = async () => {
-  try {
-    const res = await fetch(`${API_BASE}/health`);
-    return res.ok;
-  } catch {
-    return false;
-  }
-};
+const api = axios.create({
+  baseURL: API_BASE,
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
+
+export default api;

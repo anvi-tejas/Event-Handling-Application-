@@ -146,14 +146,14 @@ function MyEvents() {
     `px-5 py-2.5 rounded-xl border-2 transition-all duration-200 text-sm font-bold transform hover:scale-105 ${
       filter === key
         ? "bg-gradient-to-r from-indigo-500 to-purple-600 text-white border-transparent shadow-lg shadow-indigo-500/50"
-        : "bg-white hover:bg-gray-50 text-gray-800 border-gray-200 hover:border-indigo-300"
+        : "!bg-white hover:!bg-indigo-50 !text-gray-900 !border-indigo-300"
     }`;
 
   return (
     <>
       <Navbar toggleSidebar={() => setSidebarOpen(true)} />
 
-      <div className="flex min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+      <div className="flex min-h-screen bg-linear-to-br from-gray-50 to-gray-100">
         <Sidebar
           role="ORGANIZER"
           isOpen={sidebarOpen}
@@ -164,11 +164,11 @@ function MyEvents() {
           {/* Header Section */}
           <div className="mb-8 animate-slide-up">
             <div className="flex items-center gap-3 mb-2">
-              <div className="p-3 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl shadow-lg">
+              <div className="p-3 bg-linear-to-br from-indigo-500 to-purple-600 rounded-2xl shadow-lg">
                 <span className="text-3xl">📋</span>
               </div>
               <div>
-                <h2 className="text-3xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+                <h2 className="text-3xl font-bold bg-linear-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
                   My Events
                 </h2>
                 <p className="text-gray-600 mt-1">
@@ -216,21 +216,21 @@ function MyEvents() {
 
           {/* ✅ Empty state */}
           {events.length === 0 ? (
-            <div className="bg-gradient-to-br from-white to-gray-50 rounded-2xl shadow-lg p-12 text-center border border-gray-100">
+            <div className="bg-linear-to-br from-white to-gray-50 rounded-2xl shadow-lg p-12 text-center border border-gray-100">
               <div className="text-7xl mb-4 animate-bounce">📅</div>
               <h3 className="text-2xl font-bold text-gray-800 mb-2">No Events Created Yet</h3>
               <p className="text-gray-600 mt-2 mb-6 max-w-md mx-auto">
                 Start creating events to bring volunteers together and make a difference!
               </p>
               <button
-                className="px-8 py-4 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-bold shadow-lg hover:shadow-xl hover:shadow-indigo-500/50 transform hover:scale-105 transition-all duration-200"
+                className="px-8 py-4 rounded-xl bg-linear-to-r from-indigo-500 to-purple-600 text-white font-bold shadow-lg hover:shadow-xl hover:shadow-indigo-500/50 transform hover:scale-105 transition-all duration-200"
                 onClick={() => navigate("/create-event")}
               >
                 ➕ Create Your First Event
               </button>
             </div>
           ) : filteredEvents.length === 0 ? (
-            <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border-2 border-blue-200 text-blue-800 px-6 py-4 rounded-2xl shadow-md flex items-center gap-3">
+            <div className="bg-linear-to-r from-blue-50 to-indigo-50 border-2 border-blue-200 text-blue-800 px-6 py-4 rounded-2xl shadow-md flex items-center gap-3">
               <span className="text-3xl">🔍</span>
               <div>
                 <div className="font-bold text-lg">No Events Found</div>
@@ -244,7 +244,7 @@ function MyEvents() {
                   <span className="text-2xl">🎯</span>
                   <span>All Events</span>
                 </h3>
-                <span className="text-sm text-gray-600 bg-gradient-to-r from-indigo-50 to-purple-50 px-6 py-3 rounded-xl font-bold border border-indigo-200">
+                <span className="text-sm text-gray-600 bg-linear-to-r from-indigo-50 to-purple-50 px-6 py-3 rounded-xl font-bold border border-indigo-200">
                   {filteredEvents.length} Event{filteredEvents.length !== 1 ? "s" : ""}
                 </span>
               </div>
@@ -260,7 +260,7 @@ function MyEvents() {
                       className="bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-100 hover:scale-105 hover:-translate-y-1"
                     >
                       {/* Card Header */}
-                      <div className="bg-gradient-to-r from-indigo-500 to-purple-600 p-5 text-white">
+                      <div className="bg-linear-to-r from-indigo-500 to-purple-600 p-5 text-white">
                         <h3 className="font-bold text-xl mb-2 line-clamp-1">{event.title}</h3>
                         <p className="text-sm opacity-95 flex items-center gap-1">
                           <span>📍</span>
@@ -272,20 +272,20 @@ function MyEvents() {
                       <div className="p-5 space-y-3">
                         {/* Category */}
                         <div className="flex items-center gap-2 text-sm">
-                          <span className="bg-gradient-to-r from-blue-50 to-blue-100 px-3 py-1.5 rounded-lg border border-blue-200 font-semibold text-blue-700 flex items-center gap-1">
+                          <span className="bg-linear-to-r from-blue-50 to-blue-100 px-3 py-1.5 rounded-lg border border-blue-200 font-semibold text-blue-700 flex items-center gap-1">
                             <span>🏷️</span>
                             <span>{event.category}</span>
                           </span>
                         </div>
 
                         {/* Date */}
-                        <div className="flex items-center gap-2 text-sm bg-gradient-to-r from-purple-50 to-purple-100 px-3 py-2 rounded-lg border border-purple-200">
+                        <div className="flex items-center gap-2 text-sm bg-linear-to-r from-purple-50 to-purple-100 px-3 py-2 rounded-lg border border-purple-200">
                           <span className="font-semibold text-purple-700">📅 Start:</span>
                           <span className="text-gray-800 font-medium">{event.startDate}</span>
                         </div>
 
                         {/* Volunteers */}
-                        <div className="flex items-center gap-2 text-sm bg-gradient-to-r from-green-50 to-green-100 px-3 py-2 rounded-lg border border-green-200">
+                        <div className="flex items-center gap-2 text-sm bg-linear-to-r from-green-50 to-green-100 px-3 py-2 rounded-lg border border-green-200">
                           <span className="font-semibold text-green-700">👥 Volunteers:</span>
                           <span className="text-gray-800 font-medium">{event.requiredVolunteers}</span>
                         </div>
@@ -312,6 +312,16 @@ function MyEvents() {
                           👥 Volunteers
                         </button>
 
+                        {/* Edit button - only show for upcoming events */}
+                        {status === "UPCOMING" && (
+                          <button
+                            className="flex-1 px-4 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 text-white hover:shadow-lg hover:shadow-amber-500/50 transition-all duration-200 text-sm font-bold transform hover:scale-105"
+                            onClick={() => navigate(`/edit-event/${event.id}`)}
+                          >
+                            ✏️ Edit
+                          </button>
+                        )}
+
                         <button
                           className="flex-1 px-4 py-2.5 rounded-xl bg-gradient-to-r from-red-500 to-pink-500 text-white hover:shadow-lg hover:shadow-red-500/50 transition-all duration-200 text-sm font-bold transform hover:scale-105"
                           onClick={() => handleDelete(event.id)}
@@ -332,3 +342,4 @@ function MyEvents() {
 }
 
 export default MyEvents;
+

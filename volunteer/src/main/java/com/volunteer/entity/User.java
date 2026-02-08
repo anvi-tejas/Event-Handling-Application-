@@ -10,144 +10,110 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    // ================= BASIC =================
     private String name;
     private String email;
     private String password;
-    private String role; // VOLUNTEER / ORGANIZER / ADMIN
 
-    // ✅ Profile Fields
+    // ADMIN / ORGANIZER / VOLUNTEER
+    private String role;
+
+    // ACTIVE / BLOCKED
+    private String status = "ACTIVE";
+
+    // ================= PROFILE =================
     private String contact;
     private String gender;
-    private String skills;
-
-    // ✅ NEW Requested Fields
-    private String occupation;
     private String city;
+    private String occupation;
     private Integer age;
 
-    @Column(length = 1000)
+    @Column(length = 2000)
+    private String skills;
+
+    @Column(length = 3000)
     private String bio;
 
-    private String availability; // Weekdays / Weekends / Anytime / Evenings Only
+    private String availability;
 
-    @Column(columnDefinition = "LONGTEXT")
-    private String profilePicture; // ✅ Base64 image string
+    // ================= MEDIA =================
+    @Column(length = 100000)
+    private String profilePicture;   // base64 image
+
+    @Column(length = 100000)
+    private String documentUrl;       // base64 pdf/image
+
+    private String documentName;
+
+    // ================= VERIFICATION =================
+    private boolean verified = false;     // frontend flag
+
+    // PENDING / VERIFIED / REJECTED
+    private String verificationStatus = "PENDING";
 
     // ================= GETTERS & SETTERS =================
 
-    public Long getId() {
-        return id;
-    }
+    public Long getId() { return id; }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
 
-    // ---------------- BASIC ----------------
-    public String getName() {
-        return name;
-    }
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
 
-    public void setName(String name) {
-        this.name = name;
-    }
+    public String getPassword() { return password; }
+    public void setPassword(String password) { this.password = password; }
 
-    public String getEmail() {
-        return email;
-    }
+    public String getRole() { return role; }
+    public void setRole(String role) { this.role = role; }
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
+    public String getStatus() { return status; }
+    public void setStatus(String status) { this.status = status; }
 
-    public String getPassword() {
-        return password;
-    }
+    public String getContact() { return contact; }
+    public void setContact(String contact) { this.contact = contact; }
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
+    public String getGender() { return gender; }
+    public void setGender(String gender) { this.gender = gender; }
 
-    public String getRole() {
-        return role;
-    }
+    public String getCity() { return city; }
+    public void setCity(String city) { this.city = city; }
 
-    public void setRole(String role) {
-        this.role = role;
-    }
+    public String getOccupation() { return occupation; }
+    public void setOccupation(String occupation) { this.occupation = occupation; }
 
-    // ---------------- PROFILE ----------------
-    public String getContact() {
-        return contact;
-    }
+    public Integer getAge() { return age; }
+    public void setAge(Integer age) { this.age = age; }
 
-    public void setContact(String contact) {
-        this.contact = contact;
-    }
+    public String getSkills() { return skills; }
+    public void setSkills(String skills) { this.skills = skills; }
 
-    public String getGender() {
-        return gender;
-    }
+    public String getBio() { return bio; }
+    public void setBio(String bio) { this.bio = bio; }
 
-    public void setGender(String gender) {
-        this.gender = gender;
-    }
+    public String getAvailability() { return availability; }
+    public void setAvailability(String availability) { this.availability = availability; }
 
-    public String getSkills() {
-        return skills;
-    }
-
-    public void setSkills(String skills) {
-        this.skills = skills;
-    }
-
-    // ✅ NEW Fields
-    public String getOccupation() {
-        return occupation;
-    }
-
-    public void setOccupation(String occupation) {
-        this.occupation = occupation;
-    }
-
-    public String getCity() {
-        return city;
-    }
-
-    public void setCity(String city) {
-        this.city = city;
-    }
-
-    public Integer getAge() {
-        return age;
-    }
-
-    public void setAge(Integer age) {
-        this.age = age;
-    }
-
-    public String getBio() {
-        return bio;
-    }
-
-    public void setBio(String bio) {
-        this.bio = bio;
-    }
-
-    public String getAvailability() {
-        return availability;
-    }
-
-    public void setAvailability(String availability) {
-        this.availability = availability;
-    }
-
-    // ---------------- PROFILE PIC ----------------
-    public String getProfilePicture() {
-        return profilePicture;
-    }
-
+    public String getProfilePicture() { return profilePicture; }
     public void setProfilePicture(String profilePicture) {
         this.profilePicture = profilePicture;
+    }
+
+    public String getDocumentUrl() { return documentUrl; }
+    public void setDocumentUrl(String documentUrl) {
+        this.documentUrl = documentUrl;
+    }
+
+    public String getDocumentName() { return documentName; }
+    public void setDocumentName(String documentName) {
+        this.documentName = documentName;
+    }
+
+    public boolean isVerified() { return verified; }
+    public void setVerified(boolean verified) { this.verified = verified; }
+
+    public String getVerificationStatus() { return verificationStatus; }
+    public void setVerificationStatus(String verificationStatus) {
+        this.verificationStatus = verificationStatus;
     }
 }

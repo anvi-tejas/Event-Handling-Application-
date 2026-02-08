@@ -1,7 +1,10 @@
 package com.volunteer.controller;
 
 import com.volunteer.entity.Event;
+import com.volunteer.entity.User;
 import com.volunteer.repository.EventRepository;
+import com.volunteer.repository.UserRepository;
+import com.volunteer.service.EmailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,19 +18,60 @@ public class EventController {
     @Autowired
     private EventRepository eventRepository;
 
-    // ================= CREATE EVENT =================
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private EmailService emailService;
+
+    // ================= CREATE EVENT (ORGANIZER) =================
     @PostMapping("/create")
     public Event createEvent(@RequestBody Event event) {
-        return eventRepository.save(event);
+
+        User organizer = userRepository.findByEmail(event.getOrganizerEmail())
+                .orElseThrow(() -> new RuntimeException("Organizer not found"));
+
+        // 🔒 Block unverified organizer
+        if (!"VERIFIED".equalsIgnoreCase(organizer.getVerificationStatus())) {
+            throw new RuntimeException("Organizer account is not verified");
+        }
+
+        // ✅ Default status (admin can approve later if needed)
+        event.setStatus("PENDING");
+
+        Event savedEvent = eventRepository.save(event);
+
+        // 📧 Notify all VERIFIED volunteers
+        List<User> volunteers =
+                userRepository.findByRoleAndVerificationStatus("VOLUNTEER", "VERIFIED");
+
+        for (User v : volunteers) {
+            try {
+                emailService.sendNewEventEmail(v.getEmail(), savedEvent);
+            } catch (Exception e) {
+                System.out.println("Failed to email volunteer: " + v.getEmail());
+            }
+        }
+
+        // 📧 Notify organizer
+        try {
+            emailService.sendEventCreatedEmail(
+                    organizer.getEmail(),
+                    savedEvent
+            );
+        } catch (Exception e) {
+            System.out.println("Failed to email organizer");
+        }
+
+        return savedEvent;
     }
 
-    // ================= GET EVENTS BY ORGANIZER =================
+    // ================= GET EVENTS =================
     @GetMapping("/organizer/{email}")
     public List<Event> getEventsByOrganizer(@PathVariable String email) {
         return eventRepository.findByOrganizerEmail(email);
     }
 
-    // ================= GET ALL EVENTS =================
     @GetMapping("/all")
     public List<Event> getAllEvents() {
         return eventRepository.findAll();
@@ -35,37 +79,29 @@ public class EventController {
 
     // ================= UPDATE EVENT =================
     @PutMapping("/update/{id}")
-    public Event updateEvent(@PathVariable Long id, @RequestBody Event updatedEvent) {
+    public Event updateEvent(@PathVariable Long id,
+                             @RequestBody Event updated) {
 
         Event event = eventRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Event not found"));
 
-        // ✅ BASIC
-        event.setTitle(updatedEvent.getTitle());
-        event.setCategory(updatedEvent.getCategory());
-        event.setDescription(updatedEvent.getDescription());
-
-        // ✅ DATE/TIME
-        event.setStartDate(updatedEvent.getStartDate());
-        event.setEndDate(updatedEvent.getEndDate());
-        event.setStartTime(updatedEvent.getStartTime());
-        event.setEndTime(updatedEvent.getEndTime());
-
-        // ✅ NEW: Registration Deadline
-        event.setRegistrationDeadline(updatedEvent.getRegistrationDeadline());
-
-        // ✅ LOCATION
-        event.setLocationName(updatedEvent.getLocationName());
-        event.setAddress(updatedEvent.getAddress());
-        event.setCity(updatedEvent.getCity());
-        event.setArea(updatedEvent.getArea());
-        event.setMapLink(updatedEvent.getMapLink());
-
-        // ✅ REQUIREMENTS
-        event.setRequiredVolunteers(updatedEvent.getRequiredVolunteers());
-        event.setSkills(updatedEvent.getSkills());
-        event.setMinAge(updatedEvent.getMinAge());
-        event.setGenderPreference(updatedEvent.getGenderPreference());
+        event.setTitle(updated.getTitle());
+        event.setCategory(updated.getCategory());
+        event.setDescription(updated.getDescription());
+        event.setStartDate(updated.getStartDate());
+        event.setEndDate(updated.getEndDate());
+        event.setStartTime(updated.getStartTime());
+        event.setEndTime(updated.getEndTime());
+        event.setRegistrationDeadline(updated.getRegistrationDeadline());
+        event.setLocationName(updated.getLocationName());
+        event.setAddress(updated.getAddress());
+        event.setCity(updated.getCity());
+        event.setArea(updated.getArea());
+        event.setMapLink(updated.getMapLink());
+        event.setRequiredVolunteers(updated.getRequiredVolunteers());
+        event.setSkills(updated.getSkills());
+        event.setMinAge(updated.getMinAge());
+        event.setGenderPreference(updated.getGenderPreference());
 
         return eventRepository.save(event);
     }

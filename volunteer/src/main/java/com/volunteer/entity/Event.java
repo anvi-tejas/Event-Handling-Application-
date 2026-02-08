@@ -1,6 +1,7 @@
 package com.volunteer.entity;
 
 import jakarta.persistence.*;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "event")
@@ -16,14 +17,15 @@ public class Event {
     @Column(length = 2000)
     private String description;
 
-    private String startDate;
-    private String endDate;
+    // ✅ USE LocalDate ONLY
+    private LocalDate startDate;
+    private LocalDate endDate;
 
     private String startTime;
     private String endTime;
 
-    // ✅ NEW FIELD
-    private String registrationDeadline;
+    // Registration deadline (can also be LocalDate later)
+    private LocalDate registrationDeadline;
 
     private String locationName;
     private String address;
@@ -38,6 +40,9 @@ public class Event {
     private String genderPreference;
 
     private String organizerEmail;
+
+    // PENDING / APPROVED / COMPLETED / REJECTED
+    private String status = "PENDING";
 
     // ================= GETTERS & SETTERS =================
 
@@ -75,19 +80,19 @@ public class Event {
     }
 
     // -------- DATE/TIME --------
-    public String getStartDate() {
+    public LocalDate getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(String startDate) {
+    public void setStartDate(LocalDate startDate) {
         this.startDate = startDate;
     }
 
-    public String getEndDate() {
+    public LocalDate getEndDate() {
         return endDate;
     }
 
-    public void setEndDate(String endDate) {
+    public void setEndDate(LocalDate endDate) {
         this.endDate = endDate;
     }
 
@@ -107,12 +112,12 @@ public class Event {
         this.endTime = endTime;
     }
 
-    // ✅ NEW FIELD Getter/Setter
-    public String getRegistrationDeadline() {
+    // -------- REGISTRATION --------
+    public LocalDate getRegistrationDeadline() {
         return registrationDeadline;
     }
 
-    public void setRegistrationDeadline(String registrationDeadline) {
+    public void setRegistrationDeadline(LocalDate registrationDeadline) {
         this.registrationDeadline = registrationDeadline;
     }
 
@@ -197,5 +202,14 @@ public class Event {
 
     public void setOrganizerEmail(String organizerEmail) {
         this.organizerEmail = organizerEmail;
+    }
+
+    // -------- STATUS --------
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }

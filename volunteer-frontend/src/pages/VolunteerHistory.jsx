@@ -126,128 +126,171 @@ function VolunteerHistory() {
     <>
       <Navbar toggleSidebar={() => setSidebarOpen(true)} />
 
-      <div className="flex">
+      <div className="flex min-h-screen bg-white">
         <Sidebar
           role="VOLUNTEER"
           isOpen={sidebarOpen}
           closeSidebar={() => setSidebarOpen(false)}
         />
 
-        <div className="grow p-4">
-          <h2 className="text-2xl font-bold mb-1">🕒 Volunteer History</h2>
-          <p className="text-gray-500 mb-4">
-            Completed events & feedback
-          </p>
+        <div className="flex-1 p-8 bg-linear-to-br from-gray-50 to-gray-100">
+          {/* Header Section */}
+          <div className="mb-8">
+            <div className="flex items-center gap-3 mb-2">
+              <div className="p-3 bg-linear-to-br from-amber-500 to-orange-600 rounded-2xl shadow-lg">
+                <span className="text-3xl">🕒</span>
+              </div>
+              <div>
+                <h2 className="text-3xl font-bold bg-linear-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent">
+                  Volunteer History
+                </h2>
+                <p className="text-gray-600 mt-1">
+                  Completed events & feedback
+                </p>
+              </div>
+            </div>
+          </div>
 
           {/* Search + Filter */}
-          <div className="bg-white p-4 rounded-xl shadow mb-4 flex flex-wrap gap-3">
-            <input
-              className="flex-1 px-3 py-2 border rounded"
-              placeholder="Search by title or category..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
+          <div className="bg-white shadow-lg rounded-2xl p-6 mb-6 border border-gray-100">
+            <div className="flex flex-wrap gap-4">
+              <div className="flex-1 min-w-[250px]">
+                <div className="relative">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-lg">🔍</span>
+                  <input
+                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all"
+                    placeholder="Search by title or category..."
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                  />
+                </div>
+              </div>
 
-            <select
-              className="px-3 py-2 border rounded"
-              value={filter}
-              onChange={(e) => setFilter(e.target.value)}
-            >
-              <option value="ALL">All</option>
-              <option value="APPROVED">Approved</option>
-              <option value="REJECTED">Rejected</option>
-              <option value="PENDING">Pending</option>
-            </select>
+              <div className="min-w-[180px]">
+                <select
+                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all bg-white"
+                  value={filter}
+                  onChange={(e) => setFilter(e.target.value)}
+                >
+                  <option value="ALL">📂 All Status</option>
+                  <option value="APPROVED">✅ Approved</option>
+                  <option value="REJECTED">❌ Rejected</option>
+                  <option value="PENDING">⏳ Pending</option>
+                </select>
+              </div>
+            </div>
           </div>
 
           {/* Content */}
           {loading ? (
-            <div className="text-blue-600">Loading history...</div>
+            <div className="bg-linear-to-r from-amber-50 to-orange-50 border border-amber-200 text-amber-800 px-6 py-4 rounded-2xl shadow-md">
+              <div className="flex items-center gap-3">
+                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-amber-600"></div>
+                <span className="font-semibold">Loading history...</span>
+              </div>
+            </div>
           ) : completedHistory.length === 0 ? (
-            <div className="text-gray-600">No completed events.</div>
+            <div className="bg-linear-to-r from-gray-50 to-slate-50 border border-gray-200 text-gray-700 px-6 py-8 rounded-2xl shadow-md text-center">
+              <div className="text-6xl mb-4">📜</div>
+              <p className="text-lg font-semibold">No completed events</p>
+              <p className="text-sm text-gray-500 mt-2">Your event history will appear here once events are completed.</p>
+            </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {completedHistory.map((p) => {
                 const ev = eventsMap[p.eventId];
                 return (
                   <div
                     key={p.id}
-                    className="bg-white rounded-xl shadow p-4"
+                    className="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 p-6 border border-gray-100 hover:border-amber-200 overflow-hidden relative"
                   >
-                    <div className="flex justify-between mb-2">
-                      <h3 className="font-bold">{ev?.title}</h3>
-                      <span className={`px-2 py-1 text-xs rounded ${badge(p.status)}`}>
-                        {p.status}
-                      </span>
-                    </div>
-
-                    <p className="text-sm text-gray-600 mb-2">
-                      {ev?.category}
-                    </p>
-
-                    <div className="flex justify-between text-sm mb-3">
-                      <span>Attendance</span>
-                      <span className={`px-2 py-1 rounded text-xs ${attendanceBadge(p.attended)}`}>
-                        {attendanceText(p.attended)}
-                      </span>
-                    </div>
-
-                    {/* ⭐ Feedback Section */}
-                    {p.status === "APPROVED" && p.rating == null && (
-                      <div className="border-t pt-3">
-                        <select
-                          className="w-full mb-2 px-3 py-2 border rounded"
-                          value={feedbackForm[p.id]?.rating || ""}
-                          onChange={(e) =>
-                            setFeedbackForm((prev) => ({
-                              ...prev,
-                              [p.id]: {
-                                ...prev[p.id],
-                                rating: Number(e.target.value),
-                              },
-                            }))
-                          }
-                        >
-                          <option value="">Select Rating</option>
-                          <option value="5">⭐⭐⭐⭐⭐ Excellent</option>
-                          <option value="4">⭐⭐⭐⭐ Good</option>
-                          <option value="3">⭐⭐⭐ Average</option>
-                          <option value="2">⭐⭐ Poor</option>
-                          <option value="1">⭐ Very Bad</option>
-                        </select>
-
-                        <textarea
-                          rows="2"
-                          className="w-full px-3 py-2 border rounded mb-2"
-                          placeholder="Write feedback (optional)"
-                          value={feedbackForm[p.id]?.feedback || ""}
-                          onChange={(e) =>
-                            setFeedbackForm((prev) => ({
-                              ...prev,
-                              [p.id]: {
-                                ...prev[p.id],
-                                feedback: e.target.value,
-                              },
-                            }))
-                          }
-                        />
-
-                        <button
-                          className="w-full bg-indigo-600 text-white py-2 rounded hover:bg-indigo-700"
-                          onClick={() => submitFeedback(p.id)}
-                        >
-                          Submit Feedback
-                        </button>
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-linear-to-br from-amber-500/10 to-orange-500/10 rounded-full -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-500"></div>
+                    
+                    <div className="relative z-10">
+                      <div className="flex justify-between items-start mb-3">
+                        <h3 className="font-bold text-xl text-gray-800 group-hover:text-amber-600 transition-colors">{ev?.title}</h3>
+                        <span className={`px-3 py-1 text-xs rounded-full font-semibold ${badge(p.status)}`}>
+                          {p.status}
+                        </span>
                       </div>
-                    )}
 
-                    {/* ✅ Show submitted feedback */}
-                    {p.rating && (
-                      <div className="mt-3 text-sm text-gray-700">
-                        ⭐ Rating: {p.rating}/5 <br />
-                        📝 {p.feedback || "No feedback"}
+                      <span className="text-xs bg-linear-to-r from-gray-100 to-gray-200 text-gray-700 px-3 py-1 rounded-full font-medium inline-block mb-3">
+                        📁 {ev?.category}
+                      </span>
+
+                      <div className="bg-linear-to-r from-gray-50 to-slate-50 rounded-xl p-4 mb-4">
+                        <div className="flex justify-between items-center text-sm">
+                          <span className="font-semibold text-gray-700">Attendance</span>
+                          <span className={`px-3 py-1 rounded-full text-xs font-semibold ${attendanceBadge(p.attended)}`}>
+                            {attendanceText(p.attended)}
+                          </span>
+                        </div>
                       </div>
-                    )}
+
+                      {/* ⭐ Feedback Section */}
+                      {p.status === "APPROVED" && p.rating == null && (
+                        <div className="border-t border-gray-200 pt-4 space-y-3">
+                          <p className="text-sm font-semibold text-gray-700 mb-2">📝 Share Your Feedback</p>
+                          <select
+                            className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all bg-white"
+                            value={feedbackForm[p.id]?.rating || ""}
+                            onChange={(e) =>
+                              setFeedbackForm((prev) => ({
+                                ...prev,
+                                [p.id]: {
+                                  ...prev[p.id],
+                                  rating: Number(e.target.value),
+                                },
+                              }))
+                            }
+                          >
+                            <option value="">Select Rating</option>
+                            <option value="5">⭐⭐⭐⭐⭐ Excellent</option>
+                            <option value="4">⭐⭐⭐⭐ Good</option>
+                            <option value="3">⭐⭐⭐ Average</option>
+                            <option value="2">⭐⭐ Poor</option>
+                            <option value="1">⭐ Very Bad</option>
+                          </select>
+
+                          <textarea
+                            rows="3"
+                            className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all resize-none"
+                            placeholder="Write your feedback (optional)..."
+                            value={feedbackForm[p.id]?.feedback || ""}
+                            onChange={(e) =>
+                              setFeedbackForm((prev) => ({
+                                ...prev,
+                                [p.id]: {
+                                  ...prev[p.id],
+                                  feedback: e.target.value,
+                                },
+                              }))
+                            }
+                          />
+
+                          <button
+                            className="w-full px-4 py-3 rounded-xl font-semibold bg-linear-to-r from-amber-500 to-orange-600 text-white hover:shadow-lg hover:shadow-amber-500/50 transform hover:scale-105 transition-all duration-300"
+                            onClick={() => submitFeedback(p.id)}
+                          >
+                            ✅ Submit Feedback
+                          </button>
+                        </div>
+                      )}
+
+                      {/* ✅ Show submitted feedback */}
+                      {p.rating && (
+                        <div className="mt-4 bg-linear-to-r from-green-50 to-emerald-50 border border-green-200 rounded-xl p-4">
+                          <div className="flex items-center gap-2 mb-2">
+                            <span className="text-xl">⭐</span>
+                            <span className="font-semibold text-green-700">Rating: {p.rating}/5</span>
+                          </div>
+                          <div className="flex items-start gap-2">
+                            <span className="text-xl">📝</span>
+                            <p className="text-sm text-gray-700 leading-relaxed">{p.feedback || "No feedback provided"}</p>
+                          </div>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 );
               })}
@@ -260,3 +303,4 @@ function VolunteerHistory() {
 }
 
 export default VolunteerHistory;
+

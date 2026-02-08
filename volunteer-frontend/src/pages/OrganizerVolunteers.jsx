@@ -139,7 +139,7 @@ function OrganizerVolunteers() {
       <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 px-4 animate-fade-in">
         <div className="w-full max-w-2xl bg-white rounded-3xl shadow-2xl overflow-hidden animate-slide-up">
           {/* Header */}
-          <div className="p-6 bg-gradient-to-r from-indigo-500 to-purple-600 text-white">
+          <div className="p-6 bg-linear-to-r from-indigo-500 to-purple-600 text-white">
             <div className="flex justify-between items-start">
               <div className="flex items-center gap-4">
                 <img
@@ -169,7 +169,7 @@ function OrganizerVolunteers() {
           {/* Body */}
           <div className="p-6 space-y-4 max-h-[60vh] overflow-y-auto">
             {/* Status Badge */}
-            <div className="flex items-center justify-between p-4 bg-gradient-to-r from-gray-50 to-gray-100 rounded-2xl border border-gray-200">
+            <div className="flex items-center justify-between p-4 bg-linear-to-r from-gray-50 to-gray-100 rounded-2xl border border-gray-200">
               <div className="flex items-center gap-2">
                 <span className="text-xl">📊</span>
                 <span className="text-gray-700 font-bold">Participation Status:</span>
@@ -185,34 +185,34 @@ function OrganizerVolunteers() {
 
             {/* Info Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              <div className="bg-gradient-to-br from-blue-50 to-blue-100 p-4 rounded-xl border border-blue-200">
+              <div className="bg-linear-to-br from-blue-50 to-blue-100 p-4 rounded-xl border border-blue-200">
                 <div className="text-xs text-blue-600 font-semibold mb-1">📞 Contact</div>
                 <div className="text-gray-800 font-medium">{volunteer.contact || "-"}</div>
               </div>
-              <div className="bg-gradient-to-br from-purple-50 to-purple-100 p-4 rounded-xl border border-purple-200">
+              <div className="bg-linear-to-br from-purple-50 to-purple-100 p-4 rounded-xl border border-purple-200">
                 <div className="text-xs text-purple-600 font-semibold mb-1">⚧ Gender</div>
                 <div className="text-gray-800 font-medium">{volunteer.gender || "-"}</div>
               </div>
-              <div className="bg-gradient-to-br from-green-50 to-green-100 p-4 rounded-xl border border-green-200">
+              <div className="bg-linear-to-br from-green-50 to-green-100 p-4 rounded-xl border border-green-200">
                 <div className="text-xs text-green-600 font-semibold mb-1">🎓 Occupation</div>
                 <div className="text-gray-800 font-medium">{volunteer.occupation || "-"}</div>
               </div>
-              <div className="bg-gradient-to-br from-amber-50 to-amber-100 p-4 rounded-xl border border-amber-200">
+              <div className="bg-linear-to-br from-amber-50 to-amber-100 p-4 rounded-xl border border-amber-200">
                 <div className="text-xs text-amber-600 font-semibold mb-1">🏙 City</div>
                 <div className="text-gray-800 font-medium">{volunteer.city || "-"}</div>
               </div>
-              <div className="bg-gradient-to-br from-pink-50 to-pink-100 p-4 rounded-xl border border-pink-200">
+              <div className="bg-linear-to-br from-pink-50 to-pink-100 p-4 rounded-xl border border-pink-200">
                 <div className="text-xs text-pink-600 font-semibold mb-1">🎂 Age</div>
                 <div className="text-gray-800 font-medium">{volunteer.age || "-"}</div>
               </div>
-              <div className="bg-gradient-to-br from-indigo-50 to-indigo-100 p-4 rounded-xl border border-indigo-200">
+              <div className="bg-linear-to-br from-indigo-50 to-indigo-100 p-4 rounded-xl border border-indigo-200">
                 <div className="text-xs text-indigo-600 font-semibold mb-1">📅 Availability</div>
                 <div className="text-gray-800 font-medium">{volunteer.availability || "-"}</div>
               </div>
             </div>
 
             {/* Skills Section */}
-            <div className="bg-gradient-to-br from-cyan-50 to-cyan-100 p-4 rounded-xl border border-cyan-200">
+            <div className="bg-linear-to-br from-cyan-50 to-cyan-100 p-4 rounded-xl border border-cyan-200">
               <div className="flex items-center gap-2 mb-2">
                 <span className="text-lg">🧠</span>
                 <span className="font-bold text-cyan-800">Skills & Expertise</span>
@@ -223,7 +223,7 @@ function OrganizerVolunteers() {
             </div>
 
             {/* Bio Section */}
-            <div className="bg-gradient-to-br from-violet-50 to-violet-100 p-4 rounded-xl border border-violet-200">
+            <div className="bg-linear-to-br from-violet-50 to-violet-100 p-4 rounded-xl border border-violet-200">
               <div className="flex items-center gap-2 mb-2">
                 <span className="text-lg">📝</span>
                 <span className="font-bold text-violet-800">About</span>
@@ -232,13 +232,43 @@ function OrganizerVolunteers() {
                 {volunteer.bio || "No bio provided"}
               </p>
             </div>
+
+            {/* Feedback Section */}
+            {participation?.rating && (
+              <div className="bg-linear-to-br from-yellow-50 to-amber-50 p-4 rounded-xl border border-yellow-200">
+                <div className="flex items-center gap-2 mb-3">
+                  <span className="text-lg">⭐</span>
+                  <span className="font-bold text-yellow-800">Volunteer Feedback</span>
+                </div>
+                <div className="flex items-center gap-2 mb-3">
+                  <div className="flex">
+                    {[1, 2, 3, 4, 5].map((star) => (
+                      <span
+                        key={star}
+                        className={`text-2xl ${star <= participation.rating ? "text-yellow-500" : "text-gray-300"}`}
+                      >
+                        ★
+                      </span>
+                    ))}
+                  </div>
+                  <span className="text-yellow-700 font-bold text-lg">({participation.rating}/5)</span>
+                </div>
+                {participation.feedback && (
+                  <div className="bg-white/60 rounded-lg p-3 border border-yellow-200">
+                    <p className="text-gray-700 text-sm italic">
+                      "{participation.feedback}"
+                    </p>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
 
           {/* Footer */}
-          <div className="p-6 bg-gradient-to-r from-gray-50 to-gray-100 border-t border-gray-200 flex flex-wrap gap-3 justify-end">
+          <div className="p-6 bg-linear-to-r from-gray-50 to-gray-100 border-t border-gray-200 flex flex-wrap gap-3 justify-end">
             {participation?.status !== "APPROVED" && (
               <button
-                className="px-6 py-3 rounded-xl bg-gradient-to-r from-green-500 to-emerald-600 text-white font-bold shadow-lg hover:shadow-xl hover:shadow-green-500/50 transform hover:scale-105 transition-all duration-200"
+                className="px-6 py-3 rounded-xl bg-linear-to-r from-green-500 to-emerald-600 text-white font-bold shadow-lg hover:shadow-xl hover:shadow-green-500/50 transform hover:scale-105 transition-all duration-200"
                 onClick={() => updateStatus(participation.id, "APPROVED")}
               >
                 ✅ Approve
@@ -247,7 +277,7 @@ function OrganizerVolunteers() {
 
             {participation?.status !== "REJECTED" && (
               <button
-                className="px-6 py-3 rounded-xl bg-gradient-to-r from-red-500 to-red-600 text-white font-bold shadow-lg hover:shadow-xl hover:shadow-red-500/50 transform hover:scale-105 transition-all duration-200"
+                className="px-6 py-3 rounded-xl bg-linear-to-r from-red-500 to-red-600 text-white font-bold shadow-lg hover:shadow-xl hover:shadow-red-500/50 transform hover:scale-105 transition-all duration-200"
                 onClick={() => updateStatus(participation.id, "REJECTED")}
               >
                 ❌ Reject
@@ -255,7 +285,7 @@ function OrganizerVolunteers() {
             )}
 
             <button
-              className="px-6 py-3 rounded-xl bg-gradient-to-r from-gray-600 to-gray-700 text-white font-bold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
+              className="px-6 py-3 rounded-xl bg-linear-to-r from-gray-600 to-gray-700 text-white font-bold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
               onClick={() => setSelectedVolunteer(null)}
             >
               Close
@@ -272,7 +302,7 @@ function OrganizerVolunteers() {
     <>
       <Navbar toggleSidebar={() => setSidebarOpen(true)} />
 
-      <div className="flex min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+      <div className="flex min-h-screen bg-linear-to-br from-gray-50 to-gray-100">
         <Sidebar
           role="ORGANIZER"
           isOpen={sidebarOpen}
@@ -283,11 +313,11 @@ function OrganizerVolunteers() {
           {/* Header Section */}
           <div className="mb-8 animate-slide-up">
             <div className="flex items-center gap-3 mb-2">
-              <div className="p-3 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl shadow-lg">
+              <div className="p-3 bg-linear-to-br from-indigo-500 to-purple-600 rounded-2xl shadow-lg">
                 <span className="text-3xl">👥</span>
               </div>
               <div>
-                <h2 className="text-3xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+                <h2 className="text-3xl font-bold bg-linear-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
                   My Event Volunteers
                 </h2>
                 <p className="text-gray-600 mt-1">
@@ -323,7 +353,7 @@ function OrganizerVolunteers() {
             </select>
 
             {selectedEvent && (
-              <div className="mt-4 p-4 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl border border-indigo-100">
+              <div className="mt-4 p-4 bg-linear-to-r from-indigo-50 to-purple-50 rounded-xl border border-indigo-100">
                 <div className="flex flex-wrap gap-4 text-sm">
                   <div>
                     <span className="font-semibold text-gray-700">Event:</span>{" "}
@@ -373,23 +403,23 @@ function OrganizerVolunteers() {
 
               {/* Stats Summary */}
               <div className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-3">
-                <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg p-3 border border-blue-200">
+                <div className="bg-linear-to-br from-blue-50 to-blue-100 rounded-lg p-3 border border-blue-200">
                   <div className="text-xs text-blue-600 font-semibold mb-1">Total</div>
                   <div className="text-2xl font-bold text-blue-700">{requests.length}</div>
                 </div>
-                <div className="bg-gradient-to-br from-amber-50 to-amber-100 rounded-lg p-3 border border-amber-200">
+                <div className="bg-linear-to-br from-amber-50 to-amber-100 rounded-lg p-3 border border-amber-200">
                   <div className="text-xs text-amber-600 font-semibold mb-1">Pending</div>
                   <div className="text-2xl font-bold text-amber-700">
                     {requests.filter(r => r.status === "PENDING").length}
                   </div>
                 </div>
-                <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-lg p-3 border border-green-200">
+                <div className="bg-linear-to-br from-green-50 to-green-100 rounded-lg p-3 border border-green-200">
                   <div className="text-xs text-green-600 font-semibold mb-1">Approved</div>
                   <div className="text-2xl font-bold text-green-700">
                     {requests.filter(r => r.status === "APPROVED").length}
                   </div>
                 </div>
-                <div className="bg-gradient-to-br from-red-50 to-red-100 rounded-lg p-3 border border-red-200">
+                <div className="bg-linear-to-br from-red-50 to-red-100 rounded-lg p-3 border border-red-200">
                   <div className="text-xs text-red-600 font-semibold mb-1">Rejected</div>
                   <div className="text-2xl font-bold text-red-700">
                     {requests.filter(r => r.status === "REJECTED").length}
@@ -401,7 +431,7 @@ function OrganizerVolunteers() {
 
           {/* ✅ Table */}
           {!selectedEventId ? (
-            <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border-2 border-blue-200 text-blue-800 px-6 py-4 rounded-2xl shadow-md flex items-center gap-3">
+            <div className="bg-linear-to-r from-blue-50 to-indigo-50 border-2 border-blue-200 text-blue-800 px-6 py-4 rounded-2xl shadow-md flex items-center gap-3">
               <span className="text-3xl">📅</span>
               <div>
                 <div className="font-bold text-lg">No Event Selected</div>
@@ -409,7 +439,7 @@ function OrganizerVolunteers() {
               </div>
             </div>
           ) : loadingVolunteers ? (
-            <div className="bg-gradient-to-r from-indigo-50 to-purple-50 border-2 border-indigo-200 text-indigo-800 px-6 py-4 rounded-2xl shadow-md flex items-center gap-3">
+            <div className="bg-linear-to-r from-indigo-50 to-purple-50 border-2 border-indigo-200 text-indigo-800 px-6 py-4 rounded-2xl shadow-md flex items-center gap-3">
               <div className="animate-spin text-3xl">⏳</div>
               <div>
                 <div className="font-bold text-lg">Loading...</div>
@@ -417,7 +447,7 @@ function OrganizerVolunteers() {
               </div>
             </div>
           ) : filteredRequests.length === 0 ? (
-            <div className="bg-gradient-to-r from-gray-50 to-gray-100 border-2 border-gray-200 text-gray-700 px-6 py-4 rounded-2xl shadow-md flex items-center gap-3">
+            <div className="bg-linear-to-r from-gray-50 to-gray-100 border-2 border-gray-200 text-gray-700 px-6 py-4 rounded-2xl shadow-md flex items-center gap-3">
               <span className="text-3xl">🔍</span>
               <div>
                 <div className="font-bold text-lg">No Volunteers Found</div>
@@ -428,12 +458,13 @@ function OrganizerVolunteers() {
             <div className="overflow-hidden bg-white rounded-2xl shadow-lg border border-gray-100">
               <div className="overflow-x-auto">
                 <table className="min-w-full">
-                  <thead className="bg-gradient-to-r from-indigo-500 to-purple-600 text-white">
+                  <thead className="bg-linear-to-r from-indigo-500 to-purple-600 text-white">
                     <tr>
                       <th className="text-left px-6 py-4 font-bold text-sm uppercase tracking-wider">Volunteer</th>
                       <th className="text-left px-6 py-4 font-bold text-sm uppercase tracking-wider">Contact</th>
                       <th className="text-left px-6 py-4 font-bold text-sm uppercase tracking-wider">Skills</th>
                       <th className="text-left px-6 py-4 font-bold text-sm uppercase tracking-wider">Status</th>
+                      <th className="text-left px-6 py-4 font-bold text-sm uppercase tracking-wider">Feedback</th>
                       <th className="text-left px-6 py-4 font-bold text-sm uppercase tracking-wider w-64">Actions</th>
                     </tr>
                   </thead>
@@ -443,7 +474,7 @@ function OrganizerVolunteers() {
                     const profile = profiles[r.volunteerEmail];
 
                     return (
-                      <tr key={r.id} className="hover:bg-gradient-to-r hover:from-indigo-50 hover:to-purple-50 transition-all duration-200">
+                      <tr key={r.id} className="hover:bg-linear-to-r hover:from-indigo-50 hover:to-purple-50 transition-all duration-200">
                         <td className="px-6 py-4">
                           <div className="flex items-center gap-3">
                             <img
@@ -487,9 +518,34 @@ function OrganizerVolunteers() {
                         </td>
 
                         <td className="px-6 py-4">
+                          {r.rating ? (
+                            <div className="flex flex-col gap-1">
+                              <div className="flex items-center gap-1">
+                                {[1, 2, 3, 4, 5].map((star) => (
+                                  <span
+                                    key={star}
+                                    className={`text-lg ${star <= r.rating ? "text-yellow-500" : "text-gray-300"}`}
+                                  >
+                                    ★
+                                  </span>
+                                ))}
+                                <span className="text-xs text-gray-600 ml-1">({r.rating}/5)</span>
+                              </div>
+                              {r.feedback && (
+                                <p className="text-xs text-gray-600 truncate max-w-[150px]" title={r.feedback}>
+                                  "{r.feedback}"
+                                </p>
+                              )}
+                            </div>
+                          ) : (
+                            <span className="text-gray-400 text-sm">No feedback</span>
+                          )}
+                        </td>
+
+                        <td className="px-6 py-4">
                           <div className="flex gap-2">
                             <button
-                              className="px-4 py-2 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-semibold hover:shadow-lg hover:shadow-indigo-500/50 transform hover:scale-105 transition-all duration-200"
+                              className="px-4 py-2 rounded-xl bg-linear-to-r from-indigo-500 to-purple-600 text-white font-semibold hover:shadow-lg hover:shadow-indigo-500/50 transform hover:scale-105 transition-all duration-200"
                               onClick={() =>
                                 setSelectedVolunteer({
                                   profile,
@@ -502,7 +558,7 @@ function OrganizerVolunteers() {
 
                             {r.status !== "APPROVED" && (
                               <button
-                                className="px-3 py-2 rounded-xl bg-gradient-to-r from-green-500 to-emerald-600 text-white font-bold hover:shadow-lg hover:shadow-green-500/50 transform hover:scale-105 transition-all duration-200"
+                                className="px-3 py-2 rounded-xl bg-linear-to-r from-green-500 to-emerald-600 text-white font-bold hover:shadow-lg hover:shadow-green-500/50 transform hover:scale-105 transition-all duration-200"
                                 onClick={() => updateStatus(r.id, "APPROVED")}
                                 title="Approve"
                               >
@@ -512,7 +568,7 @@ function OrganizerVolunteers() {
 
                             {r.status !== "REJECTED" && (
                               <button
-                                className="px-3 py-2 rounded-xl bg-gradient-to-r from-red-500 to-red-600 text-white font-bold hover:shadow-lg hover:shadow-red-500/50 transform hover:scale-105 transition-all duration-200"
+                                className="px-3 py-2 rounded-xl bg-linear-to-r from-red-500 to-red-600 text-white font-bold hover:shadow-lg hover:shadow-red-500/50 transform hover:scale-105 transition-all duration-200"
                                 onClick={() => updateStatus(r.id, "REJECTED")}
                                 title="Reject"
                               >
@@ -529,7 +585,7 @@ function OrganizerVolunteers() {
               </div>
 
               {/* Results Summary */}
-              <div className="bg-gradient-to-r from-gray-50 to-gray-100 px-6 py-4 border-t border-gray-200 rounded-b-2xl">
+              <div className="bg-linear-to-r from-gray-50 to-gray-100 px-6 py-4 border-t border-gray-200 rounded-b-2xl">
                 <div className="text-sm text-gray-600 text-center">
                   Showing <span className="font-bold text-indigo-600">{filteredRequests.length}</span> of{" "}
                   <span className="font-bold text-gray-800">{requests.length}</span> volunteer(s)
@@ -552,3 +608,4 @@ function OrganizerVolunteers() {
 }
 
 export default OrganizerVolunteers;
+

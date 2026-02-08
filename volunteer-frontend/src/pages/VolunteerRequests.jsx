@@ -150,7 +150,7 @@ function VolunteerRequests() {
       <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 px-3 animate-fade-in">
         <div className="w-full max-w-2xl bg-white rounded-3xl shadow-2xl overflow-hidden animate-slide-up">
           {/* Header */}
-          <div className="p-6 bg-gradient-to-r from-indigo-500 to-purple-600 text-white">
+          <div className="p-6 bg-linear-to-r from-indigo-500 to-purple-600 text-white">
             <div className="flex justify-between items-start">
               <div className="flex items-center gap-4">
                 <img
@@ -180,7 +180,7 @@ function VolunteerRequests() {
           {/* Body */}
           <div className="p-6 space-y-4 max-h-[60vh] overflow-y-auto">
             {/* Status Badge */}
-            <div className="flex items-center justify-between p-4 bg-gradient-to-r from-gray-50 to-gray-100 rounded-2xl border border-gray-200">
+            <div className="flex items-center justify-between p-4 bg-linear-to-r from-gray-50 to-gray-100 rounded-2xl border border-gray-200">
               <div className="flex items-center gap-2">
                 <span className="text-xl">📊</span>
                 <span className="text-gray-700 font-bold">Request Status:</span>
@@ -196,34 +196,34 @@ function VolunteerRequests() {
 
             {/* Info Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              <div className="bg-gradient-to-br from-blue-50 to-blue-100 p-4 rounded-xl border border-blue-200">
+              <div className="bg-linear-to-br from-blue-50 to-blue-100 p-4 rounded-xl border border-blue-200">
                 <div className="text-xs text-blue-600 font-semibold mb-1">📞 Contact</div>
                 <div className="text-gray-800 font-medium">{profile.contact || "-"}</div>
               </div>
-              <div className="bg-gradient-to-br from-purple-50 to-purple-100 p-4 rounded-xl border border-purple-200">
+              <div className="bg-linear-to-br from-purple-50 to-purple-100 p-4 rounded-xl border border-purple-200">
                 <div className="text-xs text-purple-600 font-semibold mb-1">⚧ Gender</div>
                 <div className="text-gray-800 font-medium">{profile.gender || "-"}</div>
               </div>
-              <div className="bg-gradient-to-br from-green-50 to-green-100 p-4 rounded-xl border border-green-200">
+              <div className="bg-linear-to-br from-green-50 to-green-100 p-4 rounded-xl border border-green-200">
                 <div className="text-xs text-green-600 font-semibold mb-1">🎓 Occupation</div>
                 <div className="text-gray-800 font-medium">{profile.occupation || "-"}</div>
               </div>
-              <div className="bg-gradient-to-br from-amber-50 to-amber-100 p-4 rounded-xl border border-amber-200">
+              <div className="bg-linear-to-br from-amber-50 to-amber-100 p-4 rounded-xl border border-amber-200">
                 <div className="text-xs text-amber-600 font-semibold mb-1">🏙 City</div>
                 <div className="text-gray-800 font-medium">{profile.city || "-"}</div>
               </div>
-              <div className="bg-gradient-to-br from-pink-50 to-pink-100 p-4 rounded-xl border border-pink-200">
+              <div className="bg-linear-to-br from-pink-50 to-pink-100 p-4 rounded-xl border border-pink-200">
                 <div className="text-xs text-pink-600 font-semibold mb-1">🎂 Age</div>
                 <div className="text-gray-800 font-medium">{profile.age || "-"}</div>
               </div>
-              <div className="bg-gradient-to-br from-indigo-50 to-indigo-100 p-4 rounded-xl border border-indigo-200">
+              <div className="bg-linear-to-br from-indigo-50 to-indigo-100 p-4 rounded-xl border border-indigo-200">
                 <div className="text-xs text-indigo-600 font-semibold mb-1">📅 Availability</div>
                 <div className="text-gray-800 font-medium">{profile.availability || "-"}</div>
               </div>
             </div>
 
             {/* Skills Section */}
-            <div className="bg-gradient-to-br from-cyan-50 to-cyan-100 p-4 rounded-xl border border-cyan-200">
+            <div className="bg-linear-to-br from-cyan-50 to-cyan-100 p-4 rounded-xl border border-cyan-200">
               <div className="flex items-center gap-2 mb-2">
                 <span className="text-lg">🧠</span>
                 <span className="font-bold text-cyan-800">Skills & Expertise</span>
@@ -234,7 +234,7 @@ function VolunteerRequests() {
             </div>
 
             {/* Bio Section */}
-            <div className="bg-gradient-to-br from-violet-50 to-violet-100 p-4 rounded-xl border border-violet-200">
+            <div className="bg-linear-to-br from-violet-50 to-violet-100 p-4 rounded-xl border border-violet-200">
               <div className="flex items-center gap-2 mb-2">
                 <span className="text-lg">📝</span>
                 <span className="font-bold text-violet-800">About</span>
@@ -246,10 +246,10 @@ function VolunteerRequests() {
           </div>
 
           {/* Footer */}
-          <div className="p-6 bg-gradient-to-r from-gray-50 to-gray-100 border-t border-gray-200 flex flex-wrap gap-3 justify-end">
+          <div className="p-6 bg-linear-to-r from-gray-50 to-gray-100 border-t border-gray-200 flex flex-wrap gap-3 justify-end">
             {participation?.status !== "APPROVED" && (
               <button
-                className="px-6 py-3 rounded-xl bg-gradient-to-r from-green-500 to-emerald-600 text-white font-bold shadow-lg hover:shadow-xl hover:shadow-green-500/50 transform hover:scale-105 transition-all duration-200"
+                className="px-6 py-3 rounded-xl bg-linear-to-r from-green-500 to-emerald-600 text-white font-bold shadow-lg hover:shadow-xl hover:shadow-green-500/50 transform hover:scale-105 transition-all duration-200"
                 disabled={isLimitReached && participation?.status !== "APPROVED"}
                 style={{
                   opacity: isLimitReached && participation?.status !== "APPROVED" ? 0.6 : 1,
@@ -262,7 +262,7 @@ function VolunteerRequests() {
 
             {participation?.status !== "REJECTED" && (
               <button
-                className="px-6 py-3 rounded-xl bg-gradient-to-r from-red-500 to-red-600 text-white font-bold shadow-lg hover:shadow-xl hover:shadow-red-500/50 transform hover:scale-105 transition-all duration-200"
+                className="px-6 py-3 rounded-xl bg-linear-to-r from-red-500 to-red-600 text-white font-bold shadow-lg hover:shadow-xl hover:shadow-red-500/50 transform hover:scale-105 transition-all duration-200"
                 onClick={() => updateStatus(participation.id, "REJECTED")}
               >
                 ❌ Reject
@@ -270,7 +270,7 @@ function VolunteerRequests() {
             )}
 
             <button
-              className="px-6 py-3 rounded-xl bg-gradient-to-r from-gray-600 to-gray-700 text-white font-bold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
+              className="px-6 py-3 rounded-xl bg-linear-to-r from-gray-600 to-gray-700 text-white font-bold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
               onClick={() => setSelectedProfile(null)}
             >
               Close
@@ -285,7 +285,7 @@ function VolunteerRequests() {
     <>
       <Navbar toggleSidebar={() => setSidebarOpen(true)} />
 
-      <div className="flex min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+      <div className="flex min-h-screen bg-linear-to-br from-gray-50 to-gray-100">
         <Sidebar
           role="ORGANIZER"
           isOpen={sidebarOpen}
@@ -296,11 +296,11 @@ function VolunteerRequests() {
           {/* Header Section */}
           <div className="mb-8 animate-slide-up">
             <div className="flex items-center gap-3 mb-4">
-              <div className="p-3 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl shadow-lg">
+              <div className="p-3 bg-linear-to-br from-indigo-500 to-purple-600 rounded-2xl shadow-lg">
                 <span className="text-3xl">👥</span>
               </div>
               <div>
-                <h2 className="text-3xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+                <h2 className="text-3xl font-bold bg-linear-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
                   Volunteer Requests
                 </h2>
                 <div className="flex flex-wrap gap-3 mt-2 text-sm text-gray-600">
@@ -315,24 +315,24 @@ function VolunteerRequests() {
             {/* Stats Summary */}
             {event && (
               <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
-                <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-3 border border-green-200">
+                <div className="bg-linear-to-br from-green-50 to-green-100 rounded-xl p-3 border border-green-200">
                   <div className="text-xs text-green-600 font-semibold mb-1">✅ Approved</div>
                   <div className="text-2xl font-bold text-green-700">{approvedCount}</div>
                 </div>
-                <div className="bg-gradient-to-br from-amber-50 to-amber-100 rounded-xl p-3 border border-amber-200">
+                <div className="bg-linear-to-br from-amber-50 to-amber-100 rounded-xl p-3 border border-amber-200">
                   <div className="text-xs text-amber-600 font-semibold mb-1">⏳ Pending</div>
                   <div className="text-2xl font-bold text-amber-700">{pendingCount}</div>
                 </div>
-                <div className="bg-gradient-to-br from-red-50 to-red-100 rounded-xl p-3 border border-red-200">
+                <div className="bg-linear-to-br from-red-50 to-red-100 rounded-xl p-3 border border-red-200">
                   <div className="text-xs text-red-600 font-semibold mb-1">❌ Rejected</div>
                   <div className="text-2xl font-bold text-red-700">{rejectedCount}</div>
                 </div>
-                <div className="bg-gradient-to-br from-indigo-50 to-indigo-100 rounded-xl p-3 border border-indigo-200">
+                <div className="bg-linear-to-br from-indigo-50 to-indigo-100 rounded-xl p-3 border border-indigo-200">
                   <div className="text-xs text-indigo-600 font-semibold mb-1">🎯 Limit</div>
                   <div className="text-2xl font-bold text-indigo-700">{approvedCount}/{totalLimit}</div>
                 </div>
                 {isLimitReached && (
-                  <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl p-3 border border-gray-700">
+                  <div className="bg-linear-to-br from-gray-800 to-gray-900 rounded-xl p-3 border border-gray-700">
                     <div className="text-xs text-gray-300 font-semibold mb-1">🚫 Status</div>
                     <div className="text-sm font-bold text-white">Limit Reached</div>
                   </div>
@@ -359,7 +359,7 @@ function VolunteerRequests() {
 
           {/* Alert */}
           {limitAlert && (
-            <div className="bg-gradient-to-r from-red-50 to-red-100 border-2 border-red-300 text-red-800 px-6 py-4 rounded-2xl shadow-md relative mb-6 animate-slide-up">
+            <div className="bg-linear-to-r from-red-50 to-red-100 border-2 border-red-300 text-red-800 px-6 py-4 rounded-2xl shadow-md relative mb-6 animate-slide-up">
               <div className="flex items-center gap-3">
                 <span className="text-2xl">⚠️</span>
                 <div className="flex-1 font-medium">{limitAlert}</div>
@@ -376,7 +376,7 @@ function VolunteerRequests() {
 
           {/* Volunteers Table */}
           {filteredSortedRequests.length === 0 ? (
-            <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border-2 border-blue-200 text-blue-800 px-6 py-8 rounded-2xl shadow-md flex items-center justify-center gap-3">
+            <div className="bg-linear-to-r from-blue-50 to-indigo-50 border-2 border-blue-200 text-blue-800 px-6 py-8 rounded-2xl shadow-md flex items-center justify-center gap-3">
               <span className="text-3xl">🔍</span>
               <div>
                 <div className="font-bold text-lg">No Matching Volunteers</div>
@@ -387,7 +387,7 @@ function VolunteerRequests() {
             <div className="overflow-hidden bg-white rounded-2xl shadow-lg border border-gray-100">
               <div className="overflow-x-auto">
                 <table className="min-w-full">
-                  <thead className="bg-gradient-to-r from-indigo-500 to-purple-600 text-white">
+                  <thead className="bg-linear-to-r from-indigo-500 to-purple-600 text-white">
                     <tr>
                       <th className="px-6 py-4 text-left font-bold text-sm uppercase tracking-wider">ID</th>
                       <th className="px-6 py-4 text-left font-bold text-sm uppercase tracking-wider">Volunteer</th>
@@ -406,7 +406,7 @@ function VolunteerRequests() {
                       const p = profiles[r.volunteerEmail];
 
                       return (
-                        <tr key={r.id} className="hover:bg-gradient-to-r hover:from-indigo-50 hover:to-purple-50 transition-all duration-200">
+                        <tr key={r.id} className="hover:bg-linear-to-r hover:from-indigo-50 hover:to-purple-50 transition-all duration-200">
                           <td className="px-6 py-4 font-bold text-gray-700">{r.id}</td>
 
                           <td className="px-6 py-4">
@@ -455,7 +455,7 @@ function VolunteerRequests() {
                             <div className="flex gap-2 flex-wrap">
                               {/* View Profile Button */}
                               <button
-                                className="px-4 py-2 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-semibold hover:shadow-lg hover:shadow-indigo-500/50 transform hover:scale-105 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                                className="px-4 py-2 rounded-xl bg-linear-to-r from-indigo-500 to-purple-600 text-white font-semibold hover:shadow-lg hover:shadow-indigo-500/50 transform hover:scale-105 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
                                 onClick={() =>
                                   setSelectedProfile({
                                     profile: p,
@@ -470,7 +470,7 @@ function VolunteerRequests() {
                               {/* Approve Button */}
                               {r.status !== "APPROVED" && (
                                 <button
-                                  className="px-3 py-2 rounded-xl bg-gradient-to-r from-green-500 to-emerald-600 text-white font-bold hover:shadow-lg hover:shadow-green-500/50 transform hover:scale-105 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                                  className="px-3 py-2 rounded-xl bg-linear-to-r from-green-500 to-emerald-600 text-white font-bold hover:shadow-lg hover:shadow-green-500/50 transform hover:scale-105 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
                                   disabled={isLimitReached && r.status !== "APPROVED"}
                                   onClick={() => updateStatus(r.id, "APPROVED")}
                                   title="Approve"
@@ -482,7 +482,7 @@ function VolunteerRequests() {
                               {/* Reject Button */}
                               {r.status !== "REJECTED" && (
                                 <button
-                                  className="px-3 py-2 rounded-xl bg-gradient-to-r from-red-500 to-red-600 text-white font-bold hover:shadow-lg hover:shadow-red-500/50 transform hover:scale-105 transition-all duration-200"
+                                  className="px-3 py-2 rounded-xl bg-linear-to-r from-red-500 to-red-600 text-white font-bold hover:shadow-lg hover:shadow-red-500/50 transform hover:scale-105 transition-all duration-200"
                                   onClick={() => updateStatus(r.id, "REJECTED")}
                                   title="Reject"
                                 >
@@ -514,3 +514,4 @@ function VolunteerRequests() {
 }
 
 export default VolunteerRequests;
+

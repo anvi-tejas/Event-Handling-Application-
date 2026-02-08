@@ -8,9 +8,22 @@ import java.util.List;
 
 public interface AttendanceRepository extends JpaRepository<Attendance, Long> {
 
-    Attendance findByEventIdAndVolunteerEmailAndDate(Long eventId, String volunteerEmail, LocalDate date);
+    Attendance findByEventIdAndVolunteerEmailAndDate(
+            Long eventId,
+            String volunteerEmail,
+            LocalDate date
+    );
 
-    List<Attendance> findByEventIdAndDate(Long eventId, LocalDate date);
+    List<Attendance> findByEventIdAndDate(
+            Long eventId,
+            LocalDate date
+    );
+
+    // 🔹 NEW METHOD (REQUIRED for certificate logic)
+    List<Attendance> findByEventIdAndVolunteerEmail(
+            Long eventId,
+            String volunteerEmail
+    );
 
     List<Attendance> findByEventId(Long eventId);
 }

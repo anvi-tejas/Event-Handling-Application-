@@ -1,11 +1,13 @@
 package com.volunteer.controller;
 
+import com.volunteer.dto.ParticipationResponse;
 import com.volunteer.entity.Attendance;
 import com.volunteer.entity.Event;
 import com.volunteer.entity.Participation;
-import com.volunteer.repository.AttendanceRepository;
-import com.volunteer.repository.EventRepository;
-import com.volunteer.repository.ParticipationRepository;
+import com.volunteer.entity.User;
+import com.volunteer.repository.*;
+import com.volunteer.service.EmailService;
+import com.volunteer.service.ParticipationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,63 +28,91 @@ public class ParticipationController {
     @Autowired
     private AttendanceRepository attendanceRepository;
 
-    // ✅ Join Event (Volunteer)
+    @Autowired
+    private ParticipationService participationService;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private EmailService emailService;
+
+    // ================= JOIN EVENT (VOLUNTEER) =================
     @PostMapping("/join")
-    public String joinEvent(@RequestBody Participation participation) {
+    public Participation joinEvent(@RequestBody Participation p) {
 
-        boolean alreadyJoined = participationRepository.existsByEventIdAndVolunteerEmail(
-                participation.getEventId(),
-                participation.getVolunteerEmail()
-        );
+        User volunteer = userRepository.findByEmail(p.getVolunteerEmail())
+                .orElseThrow(() -> new RuntimeException("Volunteer not found"));
 
-        if (alreadyJoined) return "You already applied for this event";
+        // 🔒 Block unverified volunteer
+        if (!"VERIFIED".equals(volunteer.getVerificationStatus())) {
+            throw new RuntimeException("Volunteer account is not verified");
+        }
 
-        participation.setStatus("PENDING");
-        participationRepository.save(participation);
+        Event event = eventRepository.findById(p.getEventId())
+                .orElseThrow(() -> new RuntimeException("Event not found"));
 
-        return "Request Sent (Pending Approval)";
+        p.setStatus("PENDING");
+        Participation saved = participationRepository.save(p);
+
+        // 📧 Email confirmation
+        emailService.sendJoinConfirmationEmail(volunteer.getEmail(), event);
+
+        return saved;
     }
 
-    // ✅ Approve / Reject (Organizer)
+    // ================= APPROVE / REJECT =================
     @PutMapping("/update-status/{id}")
-    public Participation updateStatus(@PathVariable Long id, @RequestParam String status) {
+    public Participation updateStatus(@PathVariable Long id,
+                                      @RequestParam String status) {
 
         Participation p = participationRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Participation not found"));
 
+        Event event = eventRepository.findById(p.getEventId())
+                .orElseThrow(() -> new RuntimeException("Event not found"));
+
         if ("APPROVED".equalsIgnoreCase(status)) {
 
-            Long eventId = p.getEventId();
-
-            Event event = eventRepository.findById(eventId)
-                    .orElseThrow(() -> new RuntimeException("Event not found"));
-
-            long approvedCount = participationRepository.countByEventIdAndStatus(eventId, "APPROVED");
+            long approvedCount =
+                    participationRepository.countByEventIdAndStatus(
+                            event.getId(), "APPROVED");
 
             if (approvedCount >= event.getRequiredVolunteers()) {
-                throw new RuntimeException("Volunteer limit reached for this event");
+                throw new RuntimeException("Volunteer limit reached");
             }
+
+            // 📧 Notify volunteer approval
+            emailService.sendParticipationApprovedEmail(
+                    p.getVolunteerEmail(), event);
         }
 
         p.setStatus(status);
         return participationRepository.save(p);
     }
 
-    // ✅ Get participations by volunteer email
+    // ================= VOLUNTEER PARTICIPATIONS =================
     @GetMapping("/volunteer/{email}")
     public List<Participation> getVolunteerParticipations(@PathVariable String email) {
         return participationRepository.findByVolunteerEmail(email);
     }
 
-    // ✅ Organizer gets requests for event
+    // ================= EVENT REQUESTS =================
     @GetMapping("/event/{eventId}")
     public List<Participation> getRequestsByEvent(@PathVariable Long eventId) {
         return participationRepository.findByEventId(eventId);
     }
 
-    // ✅ Volunteer submits feedback + rating
+    // ================= VOLUNTEER HISTORY =================
+    @GetMapping("/volunteer/history/{email}")
+    public List<ParticipationResponse> getVolunteerHistory(@PathVariable String email) {
+        return participationService.getVolunteerHistory(email);
+    }
+
+    // ================= FEEDBACK =================
     @PutMapping("/feedback/{id}")
-    public Participation addFeedback(@PathVariable Long id, @RequestBody Participation updated) {
+    public Participation addFeedback(@PathVariable Long id,
+                                     @RequestBody Participation updated) {
 
         Participation p = participationRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Participation not found"));
@@ -93,61 +123,58 @@ public class ParticipationController {
         return participationRepository.save(p);
     }
 
-    // ✅ Cancel request (only PENDING)
+    // ================= CANCEL REQUEST =================
     @DeleteMapping("/cancel/{eventId}/{email}")
-    public String cancelRequest(@PathVariable Long eventId, @PathVariable String email) {
+    public String cancelRequest(@PathVariable Long eventId,
+                                @PathVariable String email) {
 
-        Participation p = participationRepository.findByEventIdAndVolunteerEmail(eventId, email);
+        Participation p =
+                participationRepository.findByEventIdAndVolunteerEmail(eventId, email);
 
         if (p == null) return "Request not found";
 
         if (!"PENDING".equalsIgnoreCase(p.getStatus())) {
-            return "You can cancel only PENDING requests";
+            return "Only PENDING requests can be cancelled";
         }
 
         participationRepository.delete(p);
         return "Request cancelled successfully ✅";
     }
 
-    // ===================== ✅ DAILY ATTENDANCE =====================
-
+    // ================= ATTENDANCE =================
     @GetMapping("/attendance/list")
-    public List<Attendance> getAttendanceForDate(
-            @RequestParam Long eventId,
-            @RequestParam String date
-    ) {
-        LocalDate d = LocalDate.parse(date);
-        return attendanceRepository.findByEventIdAndDate(eventId, d);
+    public List<Attendance> getAttendanceForDate(@RequestParam Long eventId,
+                                                 @RequestParam String date) {
+        return attendanceRepository.findByEventIdAndDate(eventId, LocalDate.parse(date));
     }
 
     @PutMapping("/attendance/mark")
-    public Attendance markDailyAttendance(
-            @RequestParam Long eventId,
-            @RequestParam String volunteerEmail,
-            @RequestParam String date,
-            @RequestParam Boolean attended
-    ) {
-        LocalDate d = LocalDate.parse(date);
+    public Attendance markAttendance(@RequestParam Long eventId,
+                                     @RequestParam String volunteerEmail,
+                                     @RequestParam String date,
+                                     @RequestParam Boolean attended) {
 
-        Participation p = participationRepository.findByEventIdAndVolunteerEmail(eventId, volunteerEmail);
+        Participation p =
+                participationRepository.findByEventIdAndVolunteerEmail(eventId, volunteerEmail);
 
         if (p == null || !"APPROVED".equalsIgnoreCase(p.getStatus())) {
-            throw new RuntimeException("Attendance can only be marked for APPROVED volunteers");
+            throw new RuntimeException("Attendance allowed only for APPROVED volunteers");
         }
 
-        Attendance existing = attendanceRepository
-                .findByEventIdAndVolunteerEmailAndDate(eventId, volunteerEmail, d);
+        LocalDate d = LocalDate.parse(date);
 
-        if (existing == null) {
-            Attendance a = new Attendance();
+        Attendance a =
+                attendanceRepository.findByEventIdAndVolunteerEmailAndDate(
+                        eventId, volunteerEmail, d);
+
+        if (a == null) {
+            a = new Attendance();
             a.setEventId(eventId);
             a.setVolunteerEmail(volunteerEmail);
             a.setDate(d);
-            a.setAttended(attended);
-            return attendanceRepository.save(a);
         }
 
-        existing.setAttended(attended);
-        return attendanceRepository.save(existing);
+        a.setAttended(attended);
+        return attendanceRepository.save(a);
     }
 }
