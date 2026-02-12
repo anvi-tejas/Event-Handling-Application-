@@ -120,33 +120,58 @@ function Attendance() {
     }
   };
 
-  // ✅ NEW: Load attendance history for all dates
-  const loadAttendanceHistory = async (eventId) => {
-    try {
-      if (!eventId) return;
+  // ✅ Store attendance summaries per volunteer
+  const [attendanceSummaries, setAttendanceSummaries] = useState({});
 
-      // Try to get history from dedicated endpoint
+  // ✅ Load attendance summary for a specific volunteer
+  const loadAttendanceSummary = async (eventId, volunteerEmail) => {
+    try {
+      if (!eventId || !volunteerEmail) return null;
+
       const res = await fetch(
-        `${API_BASE}/participations/attendance/history?eventId=${eventId}`
+        `${API_BASE}/participations/attendance/summary?eventId=${eventId}&volunteerEmail=${encodeURIComponent(volunteerEmail)}`
       );
 
       if (res.ok) {
         const data = await res.json();
-        setAttendanceHistory(Array.isArray(data) ? data : []);
-      } else {
-        // Fallback: Try to get all attendance records
-        const allRes = await fetch(
-          `${API_BASE}/participations/attendance/all?eventId=${eventId}`
-        );
-        
-        if (allRes.ok) {
-          const data = await allRes.json();
-          setAttendanceHistory(Array.isArray(data) ? data : []);
-        } else {
-          setAttendanceHistory([]);
+        return data;
+      }
+      return null;
+    } catch {
+      return null;
+    }
+  };
+
+  // ✅ Load attendance summaries for all approved volunteers
+  const loadAllAttendanceSummaries = async (eventId, volunteers) => {
+    try {
+      if (!eventId || !volunteers.length) return;
+
+      const summaries = {};
+      let allRecords = [];
+
+      // Fetch summary for each volunteer
+      for (const volunteer of volunteers) {
+        const summary = await loadAttendanceSummary(eventId, volunteer.volunteerEmail);
+        if (summary) {
+          summaries[volunteer.volunteerEmail] = summary;
+          // Collect all records for daily breakdown
+          if (summary.records && Array.isArray(summary.records)) {
+            allRecords = [...allRecords, ...summary.records];
+          }
         }
       }
+
+      setAttendanceSummaries(summaries);
+      
+      // Normalize and set attendance history for daily breakdown
+      const normalizedRecords = allRecords.map(record => ({
+        ...record,
+        attended: record.attended === true || record.attended === "true"
+      }));
+      setAttendanceHistory(normalizedRecords);
     } catch {
+      setAttendanceSummaries({});
       setAttendanceHistory([]);
     }
   };
@@ -161,7 +186,6 @@ function Attendance() {
       setSelectedEvent(event || null);
       loadApprovedVolunteers(selectedEventId);
       loadDailyAttendance(selectedEventId, selectedDate);
-      loadAttendanceHistory(selectedEventId);
       
       // Auto-switch to history view if event has ended
       if (event?.endDate) {
@@ -185,6 +209,13 @@ function Attendance() {
     // ✅ load profiles
     requests.forEach((r) => fetchProfile(r.volunteerEmail));
   }, [requests]);
+
+  useEffect(() => {
+    // ✅ load attendance summaries when volunteers are loaded
+    if (selectedEventId && requests.length > 0) {
+      loadAllAttendanceSummaries(selectedEventId, requests);
+    }
+  }, [requests, selectedEventId]);
 
   // ✅ Mark attendance daily (API)
   const markAttendance = async (volunteerEmail, attended) => {
@@ -220,8 +251,8 @@ function Attendance() {
         [volunteerEmail]: attended,
       }));
 
-      // Reload history
-      loadAttendanceHistory(selectedEventId);
+      // Reload attendance summaries
+      loadAllAttendanceSummaries(selectedEventId, requests);
     } catch {
       alert("Error marking attendance");
     }
@@ -442,14 +473,11 @@ function Attendance() {
                     <tbody className="divide-y divide-gray-100">
                       {requests.map((r) => {
                         const profile = profiles[r.volunteerEmail];
-                        // Calculate attendance from history
-                        const volunteerHistory = attendanceHistory.filter(
-                          (h) => h.volunteerEmail === r.volunteerEmail
-                        );
-                        const presentDays = volunteerHistory.filter((h) => h.attended === true).length;
-                        const absentDays = volunteerHistory.filter((h) => h.attended === false).length;
-                        const totalMarked = presentDays + absentDays;
-                        const percentage = totalMarked > 0 ? Math.round((presentDays / totalMarked) * 100) : 0;
+                        // Use attendance summary from backend API
+                        const summary = attendanceSummaries[r.volunteerEmail];
+                        const presentDays = summary?.presentDays || 0;
+                        const absentDays = summary?.absentDays || 0;
+                        const percentage = summary?.percentage || 0;
 
                         return (
                           <tr key={r.id} className="hover:bg-gray-50">

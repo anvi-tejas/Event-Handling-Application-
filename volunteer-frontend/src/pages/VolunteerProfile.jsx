@@ -119,37 +119,31 @@ function VolunteerProfile() {
       setDocumentPreview(base64Doc);
 
       try {
-        const docPayload = {
-          documentUrl: base64Doc,
-          documentName: file.name,
-          verified: false,
-        };
+        const res = await fetch(
+          `${API_BASE}/users/upload-document/${encodeURIComponent(user.email)}`,
+          {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              documentUrl: base64Doc,
+              documentName: file.name,
+            }),
+          }
+        );
 
-        // Try multiple endpoint patterns
-      const res = await fetch(
-  `${API_BASE}/users/update/${encodeURIComponent(user.email)}`,
-  {
-    method: "PUT",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      documentUrl: base64Doc,
-      documentName: file.name,
-      verified: false,
-    }),
-  }
-);
+        if (!res.ok) {
+          throw new Error("Upload failed");
+        }
 
-if (!res.ok) {
-  throw new Error("Document upload failed");
-}
+        const updated = await res.json();
+        setUserData(updated);
+        if (updated.documentUrl) setDocumentPreview(updated.documentUrl);
+        localStorage.setItem("userProfile", JSON.stringify(updated));
 
-const updated = await res.json();
-setUserData(updated);
-localStorage.setItem("userProfile", JSON.stringify(updated));
-
-alert("✅ Document uploaded successfully! Waiting for admin verification.");
-
-        // Save locally even if API fails
+        alert("✅ Document uploaded successfully! Waiting for admin verification.");
+      } catch (err) {
+        console.error("Document upload error:", err);
+        // Save locally as fallback
         const updatedData = {
           ...userData,
           documentUrl: base64Doc,

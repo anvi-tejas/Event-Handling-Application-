@@ -42,6 +42,7 @@ public class EmailService {
         );
     }
 
+    // ================= NEW EVENT NOTIFICATION =================
     public void sendNewEventEmail(String email, Event event) {
         send(
                 email,
@@ -55,18 +56,15 @@ public class EmailService {
         );
     }
 
-
     // ================= EVENT EMAILS =================
     public void sendEventCreatedEmail(String email, Event event) {
         send(
                 email,
-                "New Volunteer Event Available 📢",
-                "A new event has been posted:\n\n" +
+                "Event Created Successfully 📢",
+                "Your event has been created successfully.\n\n" +
                         "Title: " + event.getTitle() + "\n" +
-                        "Category: " + event.getCategory() + "\n" +
-                        "City: " + event.getCity() + "\n" +
-                        "Start Date: " + event.getStartDate() + "\n\n" +
-                        "Login to apply now!"
+                        "City: " + event.getCity() + "\n\n" +
+                        "Waiting for admin approval."
         );
     }
 
@@ -77,6 +75,18 @@ public class EmailService {
                 "Your event has been approved by admin.\n\n" +
                         "Event: " + event.getTitle() + "\n\n" +
                         "You can now manage volunteers."
+        );
+    }
+
+    // ⭐⭐⭐ THIS WAS MISSING — ADD THIS ⭐⭐⭐
+    public void sendEventStatusUpdateEmail(String organizerEmail, Event event) {
+        send(
+                organizerEmail,
+                "Event Status Updated 🔔",
+                "Hello Organizer,\n\n" +
+                        "Your event \"" + event.getTitle() + "\" status has been updated.\n\n" +
+                        "New Status: " + event.getStatus() + "\n\n" +
+                        "Regards,\nVolunteerHub Team"
         );
     }
 

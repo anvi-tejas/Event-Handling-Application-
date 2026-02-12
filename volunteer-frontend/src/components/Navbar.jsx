@@ -115,20 +115,22 @@ function Navbar({ toggleSidebar }) {
           </button>
 
           {open && (
-            <div className="absolute right-0 mt-4 backdrop-blur-xl bg-white/10 border border-white/20 shadow-2xl shadow-purple-500/20 rounded-2xl w-56 overflow-hidden animate-fadeIn z-50">
+            <div className="absolute right-0 mt-4 bg-white border border-gray-200 shadow-2xl shadow-purple-500/20 rounded-2xl w-56 overflow-hidden animate-fadeIn z-50">
               <div className="p-2 space-y-1">
-                <button
-                  onClick={() => navigate(user?.role === "VOLUNTEER" ? "/volunteerprofile" : user?.role === "ORGANIZER" ? "/organizerprofile" : "/")}
-                  className="flex items-center gap-3 w-full text-left px-4 py-3 text-white hover:bg-white/20 rounded-xl transition-all duration-200 font-medium"
-                >
-                  <span className="text-lg">👤</span>
-                  <span>Profile</span>
-                </button>
+                {user?.role !== "ADMIN" && (
+                  <button
+                    onClick={() => navigate(user?.role === "VOLUNTEER" ? "/volunteerprofile" : user?.role === "ORGANIZER" ? "/organizerprofile" : "/")}
+                    className="flex items-center gap-3 w-full text-left px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-xl transition-all duration-200 font-medium"
+                  >
+                    <span className="text-lg">👤</span>
+                    <span>Profile</span>
+                  </button>
+                )}
 
                 {user?.role !== "ADMIN" && (
                   <button
                     onClick={() => navigate("/certificates")}
-                    className="flex items-center gap-3 w-full text-left px-4 py-3 text-white hover:bg-white/20 rounded-xl transition-all duration-200 font-medium"
+                    className="flex items-center gap-3 w-full text-left px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-xl transition-all duration-200 font-medium"
                   >
                     <span className="text-lg">🏆</span>
                     <span>Certificates</span>
@@ -138,7 +140,7 @@ function Navbar({ toggleSidebar }) {
                 {user?.role !== "ADMIN" && (
                   <button
                     onClick={() => navigate("/help")}
-                    className="flex items-center gap-3 w-full text-left px-4 py-3 text-white hover:bg-white/20 rounded-xl transition-all duration-200 font-medium"
+                    className="flex items-center gap-3 w-full text-left px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-xl transition-all duration-200 font-medium"
                   >
                     <span className="text-lg">🆘</span>
                     <span>Help & Support</span>
@@ -147,7 +149,7 @@ function Navbar({ toggleSidebar }) {
 
                 <button
                   onClick={logout}
-                  className="flex items-center gap-3 w-full text-left px-4 py-3 text-red-400 hover:bg-red-500/20 rounded-xl transition-all duration-200 font-medium"
+                  className="flex items-center gap-3 w-full text-left px-4 py-3 text-red-500 hover:bg-red-50 rounded-xl transition-all duration-200 font-medium"
                 >
                   <span className="text-lg">🚪</span>
                   <span>Logout</span>

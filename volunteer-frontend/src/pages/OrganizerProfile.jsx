@@ -125,54 +125,56 @@ function OrganizerProfile() {
 
     const reader = new FileReader();
     reader.onloadend = async () => {
-      try {
-        const payload = {
-          documentUrl: reader.result,
-          documentName: file.name,
-        };
+      const base64Doc = reader.result;
+      setDocumentPreview(base64Doc);
 
+      try {
         const res = await fetch(
-          `${API_BASE}/users/update/${encodeURIComponent(form.email)}`,
+          `${API_BASE}/users/upload-document/${encodeURIComponent(form.email)}`,
           {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload),
+            body: JSON.stringify({
+              documentUrl: base64Doc,
+              documentName: file.name,
+            }),
           }
         );
 
         if (!res.ok) throw new Error("Upload failed");
 
+        const data = await res.json();
+
         const updated = {
           ...form,
-          documentUrl: reader.result,
-          documentName: file.name,
-          verificationStatus: "PENDING",
-          verified: false,
+          documentUrl: data.documentUrl || base64Doc,
+          documentName: data.documentName || file.name,
+          verificationStatus: data.verificationStatus || "PENDING",
+          verified: data.verified || false,
         };
 
         setForm(updated);
-        setDocumentPreview(reader.result);
+        if (data.documentUrl) setDocumentPreview(data.documentUrl);
         localStorage.setItem("organizerProfile", JSON.stringify(updated));
 
         setMessage("✅ Document uploaded successfully! Waiting for admin verification.");
       } catch (err) {
-        // Save locally even if API fails
+        console.error("Document upload error:", err);
+        // Save locally as fallback
         const updated = {
           ...form,
-          documentUrl: reader.result,
+          documentUrl: base64Doc,
           documentName: file.name,
           verificationStatus: "PENDING",
           verified: false,
         };
         setForm(updated);
-        setDocumentPreview(reader.result);
         localStorage.setItem("organizerProfile", JSON.stringify(updated));
         setMessage("⚠️ Document saved locally. Server sync pending.");
       } finally {
         setDocumentUploading(false);
       }
     };
-
     reader.readAsDataURL(file);
   };
 

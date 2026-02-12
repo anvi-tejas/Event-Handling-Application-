@@ -18,9 +18,7 @@ function Sidebar({ role, isOpen, closeSidebar }) {
     { label: "Available Events", icon: "🌍", path: "/available-events" },
     { label: "My Events", icon: "📌", path: "/volunteer-my-events" },
     { label: "History", icon: "📜", path: "/volunteer-history" },
-    { label: "Messages", icon: "💬", path: "/volunteer-messages" },
-    { label: "Profile", icon: "👤", path: "/volunteer-profile" },
-    { label: "Settings", icon: "⚙️", path: "/volunteer-settings" },
+    { label: "Profile / Settings", icon: "👤", path: "/volunteer-profile" },
   ];
 
   // ✅ UPDATED ADMIN LINKS

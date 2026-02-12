@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import Sidebar from "../components/Sidebar";
 import Navbar from "../components/Navbar";
-import { API_BASE } from "../config";
+import api, { API_BASE } from "../config";
 
 function ManageEvents() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -34,22 +34,12 @@ function ManageEvents() {
   const updateStatus = async (id, status) => {
     try {
       setActionLoading(id);
-      const endpoint = status === "APPROVED" ? "approve" : "reject";
-      const res = await fetch(
-        `${API_BASE}/events/${endpoint}/${id}`,
-        { method: "PUT" }
-      );
-
-      if (!res.ok) {
-        const msg = await res.text();
-        alert(msg || "Failed to update event status");
-        return;
-      }
-
+      await api.put(`/events/admin/update-status/${id}?status=${status}`);
       loadEvents();
       setSelectedEvent(null);
-    } catch {
-      alert("Server error");
+    } catch (err) {
+      console.error(err);
+      alert("Failed to update event status");
     } finally {
       setActionLoading(null);
     }

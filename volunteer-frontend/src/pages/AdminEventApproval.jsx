@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { API_BASE } from "../config";
+import api, { API_BASE } from "../config";
 import Navbar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
 
@@ -32,10 +32,7 @@ function AdminEventApproval() {
   const updateStatus = async (id, status) => {
     try {
       setActionLoading(id);
-      const endpoint = status === "APPROVED" ? "approve" : "reject";
-      await fetch(`${API_BASE}/events/${endpoint}/${id}`, {
-        method: "PUT"
-      });
+      await api.put(`/events/admin/update-status/${id}?status=${status}`);
       setEvents(events.filter(e => e.id !== id));
     } catch (err) {
       console.error(err);

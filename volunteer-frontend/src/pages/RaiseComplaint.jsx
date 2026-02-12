@@ -23,16 +23,14 @@ function RaiseComplaint() {
 
     try {
       setSubmitting(true);
-      await fetch(`${API_BASE}/complaints/create`, {
+      await fetch(`${API_BASE}/complaints/raise`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          raisedByEmail: user.email,
-          raisedByRole: user.role,
+          userEmail: user.email,
+          userRole: user.role,
           subject,
           message,
-          category,
-          priority,
         }),
       });
 

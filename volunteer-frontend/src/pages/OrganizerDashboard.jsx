@@ -4,6 +4,21 @@ import Navbar from "../components/Navbar";
 import { useNavigate } from "react-router-dom";
 import { API_BASE } from "../config";
 import "./OrganizerDashboard.css";
+import {
+  PieChart,
+  Pie,
+  Cell,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+  AreaChart,
+  Area,
+} from "recharts";
 
 function OrganizerDashboard() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -150,6 +165,97 @@ function OrganizerDashboard() {
                 </div>
                 <h4 className="text-gray-600 font-semibold text-sm mb-2">Approved Volunteers</h4>
                 <p className="text-4xl font-extrabold bg-linear-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">{stats.approvedRequests}</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Charts Section */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+            {/* Volunteer Requests Pie Chart */}
+            <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
+              <h3 className="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+                <span>📊</span>
+                Request Status Overview
+              </h3>
+              <div className="h-72">
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={[
+                        { name: "Approved", value: stats.approvedRequests, color: "#10b981" },
+                        { name: "Pending", value: stats.pendingRequests, color: "#f59e0b" },
+                        { name: "Rejected", value: Math.max(0, stats.totalRequests - stats.approvedRequests - stats.pendingRequests), color: "#ef4444" },
+                      ].filter(item => item.value > 0)}
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={60}
+                      outerRadius={100}
+                      paddingAngle={5}
+                      dataKey="value"
+                      label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                    >
+                      {[
+                        { name: "Approved", value: stats.approvedRequests, color: "#10b981" },
+                        { name: "Pending", value: stats.pendingRequests, color: "#f59e0b" },
+                        { name: "Rejected", value: Math.max(0, stats.totalRequests - stats.approvedRequests - stats.pendingRequests), color: "#ef4444" },
+                      ].filter(item => item.value > 0).map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={entry.color} />
+                      ))}
+                    </Pie>
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: "#1e293b",
+                        border: "none",
+                        borderRadius: "12px",
+                        color: "#fff",
+                      }}
+                    />
+                    <Legend />
+                  </PieChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+
+            {/* Performance Bar Chart */}
+            <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
+              <h3 className="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+                <span>📈</span>
+                Event Performance
+              </h3>
+              <div className="h-72">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart
+                    data={[
+                      { name: "Events", value: stats.totalEvents, fill: "#6366f1" },
+                      { name: "Requests", value: stats.totalRequests, fill: "#3b82f6" },
+                      { name: "Approved", value: stats.approvedRequests, fill: "#10b981" },
+                      { name: "Pending", value: stats.pendingRequests, fill: "#f59e0b" },
+                    ]}
+                    margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+                  >
+                    <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+                    <XAxis dataKey="name" tick={{ fill: "#64748b" }} />
+                    <YAxis tick={{ fill: "#64748b" }} />
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: "#1e293b",
+                        border: "none",
+                        borderRadius: "12px",
+                        color: "#fff",
+                      }}
+                    />
+                    <Bar dataKey="value" radius={[8, 8, 0, 0]}>
+                      {[
+                        { name: "Events", value: stats.totalEvents, fill: "#6366f1" },
+                        { name: "Requests", value: stats.totalRequests, fill: "#3b82f6" },
+                        { name: "Approved", value: stats.approvedRequests, fill: "#10b981" },
+                        { name: "Pending", value: stats.pendingRequests, fill: "#f59e0b" },
+                      ].map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={entry.fill} />
+                      ))}
+                    </Bar>
+                  </BarChart>
+                </ResponsiveContainer>
               </div>
             </div>
           </div>

@@ -111,7 +111,6 @@ function Register() {
                 >
                   <option value="VOLUNTEER" className="bg-slate-800">🤝 Volunteer</option>
                   <option value="ORGANIZER" className="bg-slate-800">📋 Organizer</option>
-                  <option value="ADMIN" className="bg-slate-800">⚙️ Admin</option>
                 </select>
                 <span className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none">▼</span>
               </div>

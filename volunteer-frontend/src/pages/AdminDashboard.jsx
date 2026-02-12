@@ -3,6 +3,23 @@ import { useNavigate } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 import Navbar from "../components/Navbar";
 import { API_BASE } from "../config";
+import {
+  PieChart,
+  Pie,
+  Cell,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+  LineChart,
+  Line,
+  AreaChart,
+  Area,
+} from "recharts";
 
 function AdminDashboard() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -18,6 +35,8 @@ function AdminDashboard() {
 
   const [recentActivity, setRecentActivity] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [userStats, setUserStats] = useState({ volunteers: 0, organizers: 0, admins: 0 });
+  const [eventStats, setEventStats] = useState({ approved: 0, pending: 0, rejected: 0 });
 
   const loadDashboardStats = async () => {
     try {
@@ -29,17 +48,33 @@ function AdminDashboard() {
       const usersList = Array.isArray(users) ? users : [];
       const pendingUsers = usersList.filter(u => u.verified === false).length;
 
+      // Calculate user role distribution
+      const volunteers = usersList.filter(u => u.role === "VOLUNTEER").length;
+      const organizers = usersList.filter(u => u.role === "ORGANIZER").length;
+      const admins = usersList.filter(u => u.role === "ADMIN").length;
+      setUserStats({ volunteers, organizers, admins });
+
       // 2️⃣ Events
-      const eRes = await fetch(`${API_BASE}/admin/events/all`);
+      const eRes = await fetch(`${API_BASE}/events/all`);
       const events = await eRes.json();
-      const eventsList = Array.isArray(events) ? events : [];
+      const eventsList = (Array.isArray(events) ? events : []).map(e => ({
+        ...e,
+        status: e.status || "PENDING"
+      }));
 
       const pendingEvents = eventsList.filter(
         (e) => e.status === "PENDING"
       ).length;
+      const approvedEvents = eventsList.filter(
+        (e) => e.status === "APPROVED"
+      ).length;
+      const rejectedEvents = eventsList.filter(
+        (e) => e.status === "REJECTED"
+      ).length;
+      setEventStats({ approved: approvedEvents, pending: pendingEvents, rejected: rejectedEvents });
 
       // 3️⃣ Complaints
-      const cRes = await fetch(`${API_BASE}/admin/complaints/all`);
+      const cRes = await fetch(`${API_BASE}/complaints/admin/all`);
       const complaints = await cRes.json();
       const complaintsList = Array.isArray(complaints) ? complaints : [];
 
@@ -243,6 +278,140 @@ function AdminDashboard() {
                 </div>
               </div>
 
+              {/* ===== CHARTS SECTION ===== */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6 mb-8">
+                {/* User Distribution Pie Chart */}
+                <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-200">
+                  <div className="flex items-center gap-3 mb-4">
+                    <span className="text-2xl">👥</span>
+                    <h4 className="text-lg font-bold text-gray-800">User Distribution</h4>
+                  </div>
+                  <div className="h-64">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <PieChart>
+                        <Pie
+                          data={[
+                            { name: "Volunteers", value: userStats.volunteers, color: "#10b981" },
+                            { name: "Organizers", value: userStats.organizers, color: "#6366f1" },
+                            { name: "Admins", value: userStats.admins, color: "#f59e0b" },
+                          ].filter(item => item.value > 0)}
+                          cx="50%"
+                          cy="50%"
+                          innerRadius={50}
+                          outerRadius={80}
+                          paddingAngle={5}
+                          dataKey="value"
+                          label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                        >
+                          {[
+                            { name: "Volunteers", value: userStats.volunteers, color: "#10b981" },
+                            { name: "Organizers", value: userStats.organizers, color: "#6366f1" },
+                            { name: "Admins", value: userStats.admins, color: "#f59e0b" },
+                          ].filter(item => item.value > 0).map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={entry.color} />
+                          ))}
+                        </Pie>
+                        <Tooltip
+                          contentStyle={{
+                            backgroundColor: "#1e293b",
+                            border: "none",
+                            borderRadius: "12px",
+                            color: "#fff",
+                          }}
+                        />
+                      </PieChart>
+                    </ResponsiveContainer>
+                  </div>
+                </div>
+
+                {/* Event Status Distribution */}
+                <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-200">
+                  <div className="flex items-center gap-3 mb-4">
+                    <span className="text-2xl">📅</span>
+                    <h4 className="text-lg font-bold text-gray-800">Event Status</h4>
+                  </div>
+                  <div className="h-64">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <PieChart>
+                        <Pie
+                          data={[
+                            { name: "Approved", value: eventStats.approved, color: "#10b981" },
+                            { name: "Pending", value: eventStats.pending, color: "#f59e0b" },
+                            { name: "Rejected", value: eventStats.rejected, color: "#ef4444" },
+                          ].filter(item => item.value > 0)}
+                          cx="50%"
+                          cy="50%"
+                          innerRadius={50}
+                          outerRadius={80}
+                          paddingAngle={5}
+                          dataKey="value"
+                          label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                        >
+                          {[
+                            { name: "Approved", value: eventStats.approved, color: "#10b981" },
+                            { name: "Pending", value: eventStats.pending, color: "#f59e0b" },
+                            { name: "Rejected", value: eventStats.rejected, color: "#ef4444" },
+                          ].filter(item => item.value > 0).map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={entry.color} />
+                          ))}
+                        </Pie>
+                        <Tooltip
+                          contentStyle={{
+                            backgroundColor: "#1e293b",
+                            border: "none",
+                            borderRadius: "12px",
+                            color: "#fff",
+                          }}
+                        />
+                      </PieChart>
+                    </ResponsiveContainer>
+                  </div>
+                </div>
+
+                {/* System Overview Bar Chart */}
+                <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-200">
+                  <div className="flex items-center gap-3 mb-4">
+                    <span className="text-2xl">📊</span>
+                    <h4 className="text-lg font-bold text-gray-800">System Overview</h4>
+                  </div>
+                  <div className="h-64">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <BarChart
+                        data={[
+                          { name: "Users", value: stats.users, fill: "#6366f1" },
+                          { name: "Events", value: stats.totalEvents, fill: "#3b82f6" },
+                          { name: "Pending", value: stats.pendingEvents, fill: "#f59e0b" },
+                          { name: "Complaints", value: stats.complaints, fill: "#ef4444" },
+                        ]}
+                        margin={{ top: 20, right: 20, left: 0, bottom: 5 }}
+                      >
+                        <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+                        <XAxis dataKey="name" tick={{ fill: "#64748b", fontSize: 12 }} />
+                        <YAxis tick={{ fill: "#64748b", fontSize: 12 }} />
+                        <Tooltip
+                          contentStyle={{
+                            backgroundColor: "#1e293b",
+                            border: "none",
+                            borderRadius: "12px",
+                            color: "#fff",
+                          }}
+                        />
+                        <Bar dataKey="value" radius={[8, 8, 0, 0]}>
+                          {[
+                            { name: "Users", value: stats.users, fill: "#6366f1" },
+                            { name: "Events", value: stats.totalEvents, fill: "#3b82f6" },
+                            { name: "Pending", value: stats.pendingEvents, fill: "#f59e0b" },
+                            { name: "Complaints", value: stats.complaints, fill: "#ef4444" },
+                          ].map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={entry.fill} />
+                          ))}
+                        </Bar>
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </div>
+                </div>
+              </div>
+
               {/* ===== QUICK ACTIONS ===== */}
               <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-200 mb-8">
                 <div className="flex items-center gap-3 mb-6">
@@ -292,9 +461,10 @@ function AdminDashboard() {
                             activity.status === 'APPROVED' ? 'bg-green-100 text-green-700' :
                             activity.status === 'REJECTED' ? 'bg-red-100 text-red-700' :
                             activity.status === 'OPEN' ? 'bg-amber-100 text-amber-700' :
+                            activity.status === 'PENDING' ? 'bg-amber-100 text-amber-700' :
                             'bg-gray-100 text-gray-700'
                           }`}>
-                            {activity.status}
+                            {activity.status || 'PENDING'}
                           </span>
                         </div>
                       ))

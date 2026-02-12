@@ -1,5 +1,6 @@
 package com.volunteer.controller;
 
+import com.volunteer.dto.AttendanceSummaryResponse;
 import com.volunteer.dto.ParticipationResponse;
 import com.volunteer.entity.Attendance;
 import com.volunteer.entity.Event;
@@ -177,4 +178,33 @@ public class ParticipationController {
         a.setAttended(attended);
         return attendanceRepository.save(a);
     }
+    @GetMapping("/attendance/summary")
+    public AttendanceSummaryResponse getAttendanceSummary(
+            @RequestParam Long eventId,
+            @RequestParam String volunteerEmail) {
+
+        List<Attendance> list =
+                attendanceRepository.findByEventIdAndVolunteerEmail(
+                        eventId, volunteerEmail);
+
+        int totalDays = list.size();
+        int presentDays = (int) list.stream()
+                .filter(a -> Boolean.TRUE.equals(a.getAttended()))
+                .count();
+
+        int absentDays = totalDays - presentDays;
+
+        double percentage = totalDays == 0
+                ? 0
+                : (presentDays * 100.0) / totalDays;
+
+        return new AttendanceSummaryResponse(
+                totalDays,
+                presentDays,
+                absentDays,
+                Math.round(percentage * 100.0) / 100.0,
+                list
+        );
+    }
+
 }

@@ -39,18 +39,46 @@ public class UserController {
         // 📄 Document upload
         if (updated.getDocumentUrl() != null) {
             user.setDocumentUrl(updated.getDocumentUrl());
-            user.setVerificationStatus("PENDING"); // reset verification
+            user.setVerificationStatus("PENDING");
+            user.setVerified(false);
         }
 
         if (updated.getDocumentName() != null) {
             user.setDocumentName(updated.getDocumentName());
         }
 
-        // 🖼 Profile picture
+        // 🖼 Profile pic
         if (updated.getProfilePicture() != null) {
             user.setProfilePicture(updated.getProfilePicture());
         }
 
+        // ✅ ADD THIS (VERY IMPORTANT)
+        if (updated.getVerificationStatus() != null) {
+            user.setVerificationStatus(updated.getVerificationStatus());
+        }
+        user.setVerified(updated.isVerified());
+
         return userRepository.save(user);
     }
+
+    @PutMapping("/upload-document/{email}")
+    public User uploadDocument(
+            @PathVariable String email,
+            @RequestBody User updated) {
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        // save document
+        user.setDocumentUrl(updated.getDocumentUrl());
+        user.setDocumentName(updated.getDocumentName());
+
+
+        // whenever user uploads/reuploads document
+        // reset verification status
+        user.setVerificationStatus("PENDING");
+
+        return userRepository.save(user);
+    }
+
 }

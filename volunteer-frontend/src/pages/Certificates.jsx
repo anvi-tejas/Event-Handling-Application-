@@ -129,6 +129,20 @@ function Certificates() {
         const endDate = new Date(event.endDate);
         if (today <= endDate) continue; // Event not completed
 
+        // Fetch organizer name
+        let organizerName = "Event Organizer";
+        try {
+          if (event.organizerEmail) {
+            const orgRes = await fetch(`${API_BASE}/users/email/${event.organizerEmail}`);
+            if (orgRes.ok) {
+              const orgData = await orgRes.json();
+              organizerName = orgData.name || "Event Organizer";
+            }
+          }
+        } catch {
+          organizerName = "Event Organizer";
+        }
+
         // Calculate attendance from daily records
         try {
           const attendancePercentage = await calculateAttendancePercentage(
@@ -140,14 +154,14 @@ function Certificates() {
 
           completedData.push({
             ...part,
-            event,
+            event: { ...event, organizerName },
             attendancePercentage: attendancePercentage || 0,
             certificateEligible: attendancePercentage >= 75,
           });
         } catch {
           completedData.push({
             ...part,
-            event,
+            event: { ...event, organizerName },
             attendancePercentage: 0,
             certificateEligible: false,
           });
@@ -397,8 +411,8 @@ function Certificates() {
       subtitle: "For Outstanding Volunteer Service",
       description: "",
       issueDate: new Date().toLocaleDateString(),
-      signatoryName: "",
-      signatoryTitle: "VolunteerHub Team",
+      signatoryName: cert.event?.organizerName || "Event Organizer",
+      signatoryTitle: "Event Organizer",
       badgeEmoji: "🏆",
       primaryColor: "#d4af37",
       accentColor: "#667eea"

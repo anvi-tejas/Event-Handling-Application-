@@ -111,4 +111,37 @@ public class EventController {
     public void deleteEvent(@PathVariable Long id) {
         eventRepository.deleteById(id);
     }
+    // ================= ADMIN APPROVE / REJECT EVENT =================
+    @PutMapping("/admin/update-status/{id}")
+    public Event updateEventStatus(
+            @PathVariable Long id,
+            @RequestParam String status
+    ) {
+
+        Event event = eventRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Event not found"));
+
+        // allow only APPROVED or REJECTED
+        if (!status.equalsIgnoreCase("APPROVED") &&
+                !status.equalsIgnoreCase("REJECTED")) {
+            throw new RuntimeException("Invalid status");
+        }
+
+        event.setStatus(status.toUpperCase());
+
+        Event savedEvent = eventRepository.save(event);
+
+        // 📧 notify organizer
+        try {
+            emailService.sendEventStatusUpdateEmail(
+                    event.getOrganizerEmail(),
+                    savedEvent
+            );
+        } catch (Exception e) {
+            System.out.println("Email failed");
+        }
+
+        return savedEvent;
+    }
+
 }

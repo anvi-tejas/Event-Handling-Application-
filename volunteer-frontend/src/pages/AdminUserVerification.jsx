@@ -64,8 +64,18 @@ function AdminUserVerification() {
   const verifyUser = async (user) => {
     try {
       setActionLoading(user.id);
-      await api.put(`/admin/users/verify/${user.id}`);
-      await loadUsers();
+      await api.put(`/users/update/${encodeURIComponent(user.email)}`, {
+        verificationStatus: "VERIFIED",
+        verified: true,
+      });
+      // Optimistically update local state so UI reflects the change immediately
+      setAllUsers(prev =>
+        prev.map(u =>
+          u.email === user.email
+            ? { ...u, verificationStatus: "VERIFIED", verified: true }
+            : u
+        )
+      );
       alert(`✅ ${user.email} verified`);
     } catch {
       alert("Verification failed");
@@ -77,8 +87,18 @@ function AdminUserVerification() {
   const rejectUser = async (user) => {
     try {
       setActionLoading(user.id);
-      await api.put(`/admin/users/reject/${user.id}`);
-      await loadUsers();
+      await api.put(`/users/update/${encodeURIComponent(user.email)}`, {
+        verificationStatus: "REJECTED",
+        verified: false,
+      });
+      // Optimistically update local state so UI reflects the change immediately
+      setAllUsers(prev =>
+        prev.map(u =>
+          u.email === user.email
+            ? { ...u, verificationStatus: "REJECTED", verified: false }
+            : u
+        )
+      );
       alert(`❌ ${user.email} rejected`);
     } catch {
       alert("Rejection failed");

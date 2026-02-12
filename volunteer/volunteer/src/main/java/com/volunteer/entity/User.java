@@ -40,8 +40,10 @@ public class User {
     @Column(length = 100000)
     private String profilePicture;   // base64 image
 
-    @Column(length = 100000)
-    private String documentUrl;       // base64 pdf/image
+    @Lob
+    @Column(columnDefinition = "LONGTEXT")
+    private String documentUrl;
+    // base64 pdf/image
 
     private String documentName;
 
