@@ -4,19 +4,19 @@
  * All data is stored in ./data/db.json and loaded on startup.
  */
 
-const fs   = require("fs");
+const fs = require("fs");
 const path = require("path");
 
-const DATA_DIR  = path.join(__dirname, "..", "data");
+const DATA_DIR = path.join(__dirname, "..", "data");
 const DATA_FILE = path.join(DATA_DIR, "db.json");
 
 let db = {
-  users:          [],
-  events:         [],
+  users: [],
+  events: [],
   participations: [],
-  notifications:  [],
-  complaints:     [],
-  attendance:     [],
+  notifications: [],
+  complaints: [],
+  attendance: [],
 };
 
 let idCounters = {
@@ -40,7 +40,7 @@ async function initDB() {
   if (fs.existsSync(DATA_FILE)) {
     try {
       const raw = JSON.parse(fs.readFileSync(DATA_FILE, "utf-8"));
-      db         = raw.db         || db;
+      db = raw.db || db;
       idCounters = raw.idCounters || idCounters;
       // Ensure all tables exist (for schema upgrades)
       for (const key of Object.keys(db)) {
@@ -50,71 +50,63 @@ async function initDB() {
       console.warn("⚠️  DB file corrupted – starting fresh");
     }
   }
-
-  // Seed a default admin if none exists
-  if (!db.users.find(u => u.role === "ADMIN")) {
-    const bcrypt = require("bcryptjs");
-    db.users.push({
-      id:                 idCounters.users++,
-      name:               "Admin",
-      email:              "admin@volunteerhub.com",
-      password:           await bcrypt.hash("admin123", 10),
-      role:               "ADMIN",
-      verified:           true,
-      verificationStatus: "VERIFIED",
-      createdAt:          new Date().toISOString(),
-    });
-    save();
-    console.log("🌱 Seeded default admin  →  admin@volunteerhub.com / admin123");
-  }
-
   console.log("✅ Database ready");
 }
 
 // ─── Generic helpers ─────────────────────────────────────────────────────────
 const Table = (name) => ({
-  findAll:    (pred) => pred ? db[name].filter(pred) : [...db[name]],
-  findOne:    (pred) => db[name].find(pred) || null,
-  findById:   (id)   => db[name].find(r => r.id === Number(id)) || null,
-  insert:     (data) => {
-    const record = { id: idCounters[name]++, ...data, createdAt: new Date().toISOString() };
+  findAll: (pred) => (pred ? db[name].filter(pred) : [...db[name]]),
+  findOne: (pred) => db[name].find(pred) || null,
+  findById: (id) => db[name].find((r) => r.id === Number(id)) || null,
+  insert: (data) => {
+    const record = {
+      id: idCounters[name]++,
+      ...data,
+      createdAt: new Date().toISOString(),
+    };
     db[name].push(record);
     save();
     return record;
   },
-  update:     (id, patch) => {
-    const idx = db[name].findIndex(r => r.id === Number(id));
+  update: (id, patch) => {
+    const idx = db[name].findIndex((r) => r.id === Number(id));
     if (idx === -1) return null;
-    db[name][idx] = { ...db[name][idx], ...patch, updatedAt: new Date().toISOString() };
+    db[name][idx] = {
+      ...db[name][idx],
+      ...patch,
+      updatedAt: new Date().toISOString(),
+    };
     save();
     return db[name][idx];
   },
   updateWhere: (pred, patch) => {
-    db[name] = db[name].map(r => pred(r) ? { ...r, ...patch, updatedAt: new Date().toISOString() } : r);
+    db[name] = db[name].map((r) =>
+      pred(r) ? { ...r, ...patch, updatedAt: new Date().toISOString() } : r,
+    );
     save();
   },
-  delete:     (id) => {
+  delete: (id) => {
     const before = db[name].length;
-    db[name] = db[name].filter(r => r.id !== Number(id));
+    db[name] = db[name].filter((r) => r.id !== Number(id));
     save();
     return db[name].length < before;
   },
   deleteWhere: (pred) => {
     const before = db[name].length;
-    db[name] = db[name].filter(r => !pred(r));
+    db[name] = db[name].filter((r) => !pred(r));
     save();
     return before - db[name].length;
   },
-  count:      (pred) => pred ? db[name].filter(pred).length : db[name].length,
+  count: (pred) => (pred ? db[name].filter(pred).length : db[name].length),
 });
 
 module.exports = {
   initDB,
   save,
-  Users:          Table("users"),
-  Events:         Table("events"),
+  Users: Table("users"),
+  Events: Table("events"),
   Participations: Table("participations"),
-  Notifications:  Table("notifications"),
-  Complaints:     Table("complaints"),
-  Attendance:     Table("attendance"),
+  Notifications: Table("notifications"),
+  Complaints: Table("complaints"),
+  Attendance: Table("attendance"),
 };
