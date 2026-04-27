@@ -12,28 +12,34 @@ const HelpSupport = () => {
   const faqs = [
     {
       question: "How do I join a volunteer event?",
-      answer: "Go to 'Available Events', browse the events, and click 'Join' on any event you're interested in. Your request will be sent to the organizer for approval."
+      answer:
+        "Go to 'Available Events', browse the events, and click 'Join' on any event you're interested in. Your request will be sent to the organizer for approval.",
     },
     {
       question: "How do I get my certificate?",
-      answer: "After completing an event (attending and getting marked present), you can download your certificate from the 'Certificates' section in the navbar dropdown."
+      answer:
+        "After completing an event (attending and getting marked present), you can download your certificate from the 'Certificates' section in the navbar dropdown.",
     },
     {
       question: "What if my participation request is rejected?",
-      answer: "Organizers may reject requests due to limited spots or specific requirements. You can try joining other events or contact the organizer for more information."
+      answer:
+        "Organizers may reject requests due to limited spots or specific requirements. You can try joining other events or contact the organizer for more information.",
     },
     {
       question: "How do I update my profile?",
-      answer: "Go to 'Profile' from the sidebar or navbar dropdown. You can update your skills, contact information, and other details there."
+      answer:
+        "Go to 'Profile' from the sidebar or navbar dropdown. You can update your skills, contact information, and other details there.",
     },
     {
       question: "How can I raise a complaint?",
-      answer: "Click the 'Raise Complaint' button below or go to the complaints section. Admin will review and respond to your complaint."
+      answer:
+        "Click the 'Raise Complaint' button below or go to the complaints section. Admin will review and respond to your complaint.",
     },
     {
       question: "Why can't I see my certificate?",
-      answer: "Certificates are only available for completed events where you had sufficient attendance. Make sure the event has ended and you were marked present."
-    }
+      answer:
+        "Certificates are only available for completed events where you had sufficient attendance. Make sure the event has ended and you were marked present.",
+    },
   ];
 
   const [openFaq, setOpenFaq] = useState(null);
@@ -108,7 +114,7 @@ const HelpSupport = () => {
                     </div>
                     <div>
                       <p className="text-sm text-gray-500 font-medium">Email</p>
-                      <p className="text-gray-800 font-bold">support@volunteerhub.com</p>
+                      <p className="text-gray-800 font-bold">on work</p>
                     </div>
                   </div>
 
@@ -118,7 +124,7 @@ const HelpSupport = () => {
                     </div>
                     <div>
                       <p className="text-sm text-gray-500 font-medium">Phone</p>
-                      <p className="text-gray-800 font-bold">+91 98765 43210</p>
+                      <p className="text-gray-800 font-bold">1234567891</p>
                     </div>
                   </div>
 
@@ -127,8 +133,12 @@ const HelpSupport = () => {
                       🕒
                     </div>
                     <div>
-                      <p className="text-sm text-gray-500 font-medium">Support Hours</p>
-                      <p className="text-gray-800 font-bold">Mon – Fri (9 AM – 6 PM)</p>
+                      <p className="text-sm text-gray-500 font-medium">
+                        Support Hours
+                      </p>
+                      <p className="text-gray-800 font-bold">
+                        Tue – Fri (9 AM – 6 PM)
+                      </p>
                     </div>
                   </div>
 
@@ -137,8 +147,10 @@ const HelpSupport = () => {
                       📍
                     </div>
                     <div>
-                      <p className="text-sm text-gray-500 font-medium">Location</p>
-                      <p className="text-gray-800 font-bold">Bangalore, India</p>
+                      <p className="text-sm text-gray-500 font-medium">
+                        Location
+                      </p>
+                      <p className="text-gray-800 font-bold">Dehradun, India</p>
                     </div>
                   </div>
                 </div>
@@ -160,8 +172,12 @@ const HelpSupport = () => {
                       🚨
                     </div>
                     <div>
-                      <p className="text-gray-800 font-bold">Raise a Complaint</p>
-                      <p className="text-sm text-gray-500">Report issues or problems</p>
+                      <p className="text-gray-800 font-bold">
+                        Raise a Complaint
+                      </p>
+                      <p className="text-sm text-gray-500">
+                        Report issues or problems
+                      </p>
                     </div>
                     <span className="ml-auto text-gray-400">→</span>
                   </button>
@@ -175,7 +191,9 @@ const HelpSupport = () => {
                     </div>
                     <div>
                       <p className="text-gray-800 font-bold">Update Profile</p>
-                      <p className="text-sm text-gray-500">Edit your information</p>
+                      <p className="text-sm text-gray-500">
+                        Edit your information
+                      </p>
                     </div>
                     <span className="ml-auto text-gray-400">→</span>
                   </button>
@@ -188,8 +206,12 @@ const HelpSupport = () => {
                       🏆
                     </div>
                     <div>
-                      <p className="text-gray-800 font-bold">View Certificates</p>
-                      <p className="text-sm text-gray-500">Download your achievements</p>
+                      <p className="text-gray-800 font-bold">
+                        View Certificates
+                      </p>
+                      <p className="text-sm text-gray-500">
+                        Download your achievements
+                      </p>
                     </div>
                     <span className="ml-auto text-gray-400">→</span>
                   </button>
@@ -200,7 +222,8 @@ const HelpSupport = () => {
                   <p className="text-sm font-medium flex items-start gap-2">
                     <span className="text-lg">💡</span>
                     <span>
-                      For event issues, complaints, or verification queries, our admin team will assist you within 24-48 hours.
+                      For event issues, complaints, or verification queries, our
+                      admin team will assist you within 24-48 hours.
                     </span>
                   </p>
                 </div>
@@ -223,7 +246,9 @@ const HelpSupport = () => {
                     className="border border-gray-200 rounded-xl overflow-hidden"
                   >
                     <button
-                      onClick={() => setOpenFaq(openFaq === index ? null : index)}
+                      onClick={() =>
+                        setOpenFaq(openFaq === index ? null : index)
+                      }
                       className="w-full flex items-center justify-between p-4 text-left hover:bg-gray-50 transition-colors duration-200"
                     >
                       <span className="font-semibold text-gray-800 flex items-center gap-2">
