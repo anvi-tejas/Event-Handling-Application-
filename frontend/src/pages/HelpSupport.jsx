@@ -137,7 +137,7 @@ const HelpSupport = () => {
                         Support Hours
                       </p>
                       <p className="text-gray-800 font-bold">
-                        Tue – Fri (9 AM – 6 PM)
+                        Tue – Fri (9 AM – 4 PM)
                       </p>
                     </div>
                   </div>
